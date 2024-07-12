@@ -1,0 +1,16 @@
+{
+  "config": {
+    "classmap-authoritative": true
+  },
+  "autoload": {
+    "psr-4": {
+      "Combodo\\iTop\\MFARecoveryCodes\\": "src"
+    }
+  },
+  "name": "combodo/combodo-mfa-recovery-codes",
+  "type": "itop-extension",
+  "description": "MFA recovery codes",
+  "require": {
+    "composer-runtime-api": "^2.0"
+  }
+}
