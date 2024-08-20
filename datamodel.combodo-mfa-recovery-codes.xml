@@ -1,15 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.6">
-  <constants>
-  </constants>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2">
   <classes>
+    <class id="MFAUserSettingsRecoveryCode" _created_in="combodo-mfa-recovery-codes" _delta="define">
+      <properties>
+        <category>bizmodel,searchable</category>
+        <abstract>false</abstract>
+        <db_table>mfausersettingsrecoverycode</db_table>
+        <style>
+          <icon>
+            <fileref ref="icons8-list_3bd77585fff0abd39e0cb2cfecbf34a1"/>
+          </icon>
+        </style>
+        <naming>
+          <attributes>
+            <attribute id="user_id_friendlyname"/>
+            <attribute id="finalclass"/>
+          </attributes>
+          <complementary_attributes>
+            <attribute id="user_id_friendlyname"/>
+            <attribute id="finalclass"/>
+          </complementary_attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="user_id"/>
+          </attributes>
+        </reconciliation>
+      </properties>
+      <fields/>
+      <methods/>
+      <presentation>
+        <list>
+          <items>
+            <item id="user_id">
+              <rank>10</rank>
+            </item>
+            <item id="status">
+              <rank>20</rank>
+            </item>
+            <item id="is_default">
+              <rank>30</rank>
+            </item>
+          </items>
+        </list>
+        <search>
+          <items/>
+        </search>
+        <details>
+          <items>
+            <item id="user_id">
+              <rank>10</rank>
+            </item>
+            <item id="status">
+              <rank>20</rank>
+            </item>
+            <item id="is_default">
+              <rank>30</rank>
+            </item>
+          </items>
+        </details>
+      </presentation>
+      <parent>MFAUserSettings</parent>
+    </class>
   </classes>
-  <menus>
-  </menus>
-  <user_rights>
-    <groups>
-    </groups>
-    <profiles>
-    </profiles>
-  </user_rights>
+  <files>
+    <file id="icons8-list_3bd77585fff0abd39e0cb2cfecbf34a1" xsi:type="File" _delta="define_if_not_exists">
+      <name>icons8-list.svg</name>
+      <mime_type>image/svg+xml</mime_type>
+      <data>PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciICB2aWV3Qm94PSIwIDAgNDggNDgiIHdpZHRoPSI0OHB4IiBoZWlnaHQ9IjQ4cHgiPjxsaW5lYXJHcmFkaWVudCBpZD0iYWU2bXV1aHhpMkJuSjR0bUtwUktWYSIgeDE9IjEyLjg2NCIgeDI9IjMyLjA3MiIgeTE9IjUxNi43OTkiIHkyPSI0ODkuMDE0IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDAgNTI2KSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzdkZDhmMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzQ1YjBkMCIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZmlsbD0idXJsKCNhZTZtdXVoeGkyQm5KNHRtS3BSS1ZhKSIgZD0iTTQsMzhWMTJoNDB2MjZjMCwxLjEtMC45LDItMiwySDZDNC45LDQwLDQsMzkuMSw0LDM4eiIvPjxwYXRoIGZpbGw9IiMwZDg2YWQiIGQ9Ik0zOC41LDI1aC0yM2MtMC4yNzYsMC0wLjUtMC4yMjQtMC41LTAuNXYtMWMwLTAuMjc2LDAuMjI0LTAuNSwwLjUtMC41aDIzIGMwLjI3NiwwLDAuNSwwLjIyNCwwLjUsMC41djFDMzksMjQuNzc2LDM4Ljc3NiwyNSwzOC41LDI1eiIvPjxwYXRoIGZpbGw9IiMwZDg2YWQiIGQ9Ik0zOC41LDMwaC0yM2MtMC4yNzYsMC0wLjUtMC4yMjQtMC41LTAuNXYtMWMwLTAuMjc2LDAuMjI0LTAuNSwwLjUtMC41aDIzIGMwLjI3NiwwLDAuNSwwLjIyNCwwLjUsMC41djFDMzksMjkuNzc2LDM4Ljc3NiwzMCwzOC41LDMweiIvPjxwYXRoIGZpbGw9IiMwZDg2YWQiIGQ9Ik0zOC41LDM1aC0yM2MtMC4yNzYsMC0wLjUtMC4yMjQtMC41LTAuNXYtMWMwLTAuMjc2LDAuMjI0LTAuNSwwLjUtMC41aDIzIGMwLjI3NiwwLDAuNSwwLjIyNCwwLjUsMC41djFDMzksMzQuNzc2LDM4Ljc3NiwzNSwzOC41LDM1eiIvPjxsaW5lYXJHcmFkaWVudCBpZD0iYWU2bXV1aHhpMkJuSjR0bUtwUktWYiIgeDE9IjQuODA4IiB4Mj0iNDIuNzUiIHkxPSI1MTkuMjIiIHkyPSI1MTEuNTA1IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDAgNTI2KSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzAwNzdkMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBiNTlhMiIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZmlsbD0idXJsKCNhZTZtdXVoeGkyQm5KNHRtS3BSS1ZiKSIgZD0iTTQ0LDEwdjNINHYtM2MwLTEuMSwwLjktMiwyLTJoMzZDNDMuMSw4LDQ0LDguOSw0NCwxMHoiLz48cGF0aCBmaWxsPSIjMGQ4NmFkIiBkPSJNOS41LDI1aDFjMC4yNzYsMCwwLjUtMC4yMjQsMC41LTAuNXYtMWMwLTAuMjc2LTAuMjI0LTAuNS0wLjUtMC41aC0xQzkuMjI0LDIzLDksMjMuMjI0LDksMjMuNXYxIEM5LDI0Ljc3Niw5LjIyNCwyNSw5LjUsMjV6Ii8+PHBhdGggZmlsbD0iIzBkODZhZCIgZD0iTTkuNSwzMGgxYzAuMjc2LDAsMC41LTAuMjI0LDAuNS0wLjV2LTFjMC0wLjI3Ni0wLjIyNC0wLjUtMC41LTAuNWgtMUM5LjIyNCwyOCw5LDI4LjIyNCw5LDI4LjV2MSBDOSwyOS43NzYsOS4yMjQsMzAsOS41LDMweiIvPjxwYXRoIGZpbGw9IiMwZDg2YWQiIGQ9Ik05LjUsMzVoMWMwLjI3NiwwLDAuNS0wLjIyNCwwLjUtMC41di0xYzAtMC4yNzYtMC4yMjQtMC41LTAuNS0wLjVoLTFDOS4yMjQsMzMsOSwzMy4yMjQsOSwzMy41djEgQzksMzQuNzc2LDkuMjI0LDM1LDkuNSwzNXoiLz48cGF0aCBmaWxsPSIjMGQ4NmFkIiBkPSJNMzguNSwyMGgtMjlDOS4yMjQsMjAsOSwxOS43NzYsOSwxOS41di0yQzksMTcuMjI0LDkuMjI0LDE3LDkuNSwxN2gyOWMwLjI3NiwwLDAuNSwwLjIyNCwwLjUsMC41djIgQzM5LDE5Ljc3NiwzOC43NzYsMjAsMzguNSwyMHoiLz48L3N2Zz4=</data>
+    </file>
+  </files>
 </itop_design>
