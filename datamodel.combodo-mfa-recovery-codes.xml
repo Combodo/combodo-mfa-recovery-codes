@@ -3,7 +3,7 @@
   <classes>
     <class id="MFAUserSettingsRecoveryCode" _created_in="combodo-mfa-recovery-codes" _delta="define">
       <properties>
-        <category>bizmodel,searchable</category>
+        <category>bizmodel,searchable,MFAMode</category>
         <abstract>false</abstract>
         <db_table>mfausersettingsrecoverycode</db_table>
         <style>
