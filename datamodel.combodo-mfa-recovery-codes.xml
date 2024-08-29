@@ -5,7 +5,7 @@
       <properties>
         <category>bizmodel,searchable,MFAMode</category>
         <abstract>false</abstract>
-        <db_table>mfausersettingsrecoverycode</db_table>
+        <db_table>mfa_user_settings_recovery_code</db_table>
         <style>
           <icon>
             <fileref ref="icons8-list_3bd77585fff0abd39e0cb2cfecbf34a1"/>
@@ -29,6 +29,35 @@
       </properties>
       <fields/>
       <methods>
+        <method id="GetConfigurationURLForMyAccountRedirection">
+          <comment>/**
+            *
+            * @return LoginTwigContext
+            */
+          </comment>
+          <static>false</static>
+          <access>public</access>
+          <type>Custom</type>
+          <code><![CDATA[	public function GetConfigurationURLForMyAccountRedirection(): string
+          {
+            return 'Combodo\iTop\MFATotp\Service\MFATOTPService::GetInstance()->GetConfigurationURLForMyAccountRedirection($this)';
+          }]]></code>
+        </method>
+        <method id="CanBeDefault">
+          <comment>/**
+            *
+            *
+            */
+          </comment>
+          <static>false</static>
+          <access>public</access>
+          <type>Custom</type>
+          <code><![CDATA[	public function CanBeDefault(): bool
+	{
+		return false;
+	}]]></code>
+        </method>
+
          <method id="GetTwigContextForConfiguration">
           <comment>/**
             *
@@ -58,22 +87,6 @@
             return new LoginContext();
           }]]></code>
         </method>
-
-         <method id="GetTwigContextForModeSwitch">
-          <comment>/**
-	          * Provide Display information for link to configure MFA in another mode than currently displayed or default one
-            * @return LoginTwigContext
-            */
-          </comment>
-          <static>false</static>
-          <access>public</access>
-          <type>Custom</type>
-          <code><![CDATA[	public function GetTwigContextForModeSwitch(): LoginTwigContext
-          {
-            return new LoginContext();
-          }]]></code>
-        </method>
-
         <method id="HasToDisplayValidation">
           <comment>/**
             * Indicates if the validation screen has to be displayed or not

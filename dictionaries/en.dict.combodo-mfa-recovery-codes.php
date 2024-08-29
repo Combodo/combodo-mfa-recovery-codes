@@ -7,6 +7,5 @@
  */
 
 Dict::Add('EN US', 'English', 'English', array(
-	// Dictionary entries go here
+	'MFA:login:switch:label:MFAUserSettingsRecoveryCode' => 'Use recovery code',
 ));
-?>
