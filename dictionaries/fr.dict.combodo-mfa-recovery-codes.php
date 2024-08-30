@@ -8,4 +8,5 @@
 
 Dict::Add('FR FR', 'French', 'Français', array(
 	'MFA:login:switch:label:MFAUserSettingsRecoveryCode' => 'Use recovery code',
+	'Class:MFAUserSettingsRecoveryCode' => 'MFA Recovery codes',
 ));
