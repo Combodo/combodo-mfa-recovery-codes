@@ -123,7 +123,7 @@
             <item id="user_id">
               <rank>10</rank>
             </item>
-            <item id="status">
+            <item id="validated">
               <rank>20</rank>
             </item>
             <item id="is_default">
@@ -139,7 +139,7 @@
             <item id="user_id">
               <rank>10</rank>
             </item>
-            <item id="status">
+            <item id="validated">
               <rank>20</rank>
             </item>
             <item id="is_default">
