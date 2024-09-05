@@ -6,6 +6,8 @@
 
 namespace Combodo\iTop\MFARecoveryCodes\Service;
 
+use DBObjectSet;
+use DBSearch;
 use MetaModel;
 use MFARecoveryCode;
 use MFAUserSettingsRecoveryCodes;
@@ -47,7 +49,12 @@ class MFAUserSettingsRecoveryCodesService
 
 	public function DeleteCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings): void
 	{
-
+		$sId = $oMFAUserSettings->GetKey();
+		$oSet = new DBObjectSet(DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id"), [], ['id' => $sId]);
+		while ($oCode = $oSet->Fetch()) {
+			$oCode->AllowDelete();
+			$oCode->DBDelete();
+		}
 	}
 
 	public function GetCodesAsArray(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array

@@ -20,21 +20,48 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 
 	}
 
-	public function testCreateCodes()
+	public function testCreateUserSettingsHasNoCode()
 	{
+		// Given
 		$oUser = $this->CreateContactlessUser('NoOrgUser', ItopDataTestCase::$aURP_Profiles['Service Desk Agent'], 'ABCdefg@12345#');
 		$sUserId = $oUser->GetKey();
-
 		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
 
+		// Then
+		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
+		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
+	}
+
+	public function testCreateCodes()
+	{
+		// Given
+		$oUser = $this->CreateContactlessUser('NoOrgUser', ItopDataTestCase::$aURP_Profiles['Service Desk Agent'], 'ABCdefg@12345#');
+		$sUserId = $oUser->GetKey();
+		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
 		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
 
-		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
-
+		// Act
 		$oService->CreateCodes($oUserSettings);
 
+		// Then
 		$aCodes = $oService->GetCodesAsArray($oUserSettings);
 		var_export($aCodes);
 		$this->assertCount(MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT, $aCodes);
+	}
+
+	public function testDeleteCodes()
+	{
+		// Given
+		$oUser = $this->CreateContactlessUser('NoOrgUser', ItopDataTestCase::$aURP_Profiles['Service Desk Agent'], 'ABCdefg@12345#');
+		$sUserId = $oUser->GetKey();
+		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
+		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
+		$oService->CreateCodes($oUserSettings);
+
+		// Act
+		$oService->DeleteCodes($oUserSettings);
+
+		// Then
+		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
 	}
 }
