@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2">
   <classes>
-    <class id="MFAUserSettingsRecoveryCode" _created_in="combodo-mfa-recovery-codes" _delta="define">
+    <class id="MFAUserSettingsRecoveryCodes" _created_in="combodo-mfa-recovery-codes" _delta="define">
       <properties>
         <category>bizmodel,searchable,MFAMode</category>
         <abstract>false</abstract>
@@ -27,7 +27,17 @@
           </attributes>
         </reconciliation>
       </properties>
-      <fields/>
+      <fields>
+        <field id="mfarecoverycodes_list" xsi:type="AttributeLinkedSet">
+          <linked_class>MFARecoveryCode</linked_class>
+          <ext_key_to_me>mfausersettingsrecoverycodes_id</ext_key_to_me>
+          <tracking_level>none</tracking_level>
+          <edit_mode/>
+          <with_php_constraint>false</with_php_constraint>
+          <with_php_computation>false</with_php_computation>
+          <edit_when/>
+        </field>
+      </fields>
       <methods>
         <method id="GetConfigurationURLForMyAccountRedirection">
           <comment>/**
@@ -40,7 +50,7 @@
           <type>Custom</type>
           <code><![CDATA[	public function GetConfigurationURLForMyAccountRedirection(): string
           {
-            return 'Combodo\iTop\MFATotp\Service\MFATOTPService::GetInstance()->GetConfigurationURLForMyAccountRedirection($this)';
+            return Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService::GetInstance()->GetConfigurationURLForMyAccountRedirection($this);
           }]]></code>
         </method>
         <method id="CanBeDefault">
@@ -57,8 +67,7 @@
 		return false;
 	}]]></code>
         </method>
-
-         <method id="GetTwigContextForConfiguration">
+        <method id="GetTwigContextForConfiguration">
           <comment>/**
             *
             * @return LoginTwigContext
@@ -69,11 +78,10 @@
           <type>Custom</type>
           <code><![CDATA[	public function GetTwigContextForConfiguration(): LoginTwigContext
           {
-            return new LoginContext();
+            return new LoginTwigContext();
           }]]></code>
         </method>
-
-         <method id="GetTwigContextForLoginValidation">
+        <method id="GetTwigContextForLoginValidation">
           <comment>/**
             *
             * @return LoginTwigContext
@@ -84,7 +92,7 @@
           <type>Custom</type>
           <code><![CDATA[	public function GetTwigContextForLoginValidation(): LoginTwigContext
           {
-            return new LoginContext();
+            return Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService::GetInstance()->GetTwigContextForLoginValidation($this);
           }]]></code>
         </method>
         <method id="HasToDisplayValidation">
@@ -98,10 +106,9 @@
           <type>Custom</type>
           <code><![CDATA[	public function HasToDisplayValidation(): bool
           {
-            return true;
+            return Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService::GetInstance()->HasToDisplayValidation($this);
           }]]></code>
         </method>
-
         <method id="ValidateLogin">
           <comment>/**
             * Indicates if the validation code given by the user is valid or not
@@ -113,7 +120,7 @@
           <type>Custom</type>
           <code><![CDATA[	public function ValidateLogin(): bool
           {
-            return true;
+            return Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService::GetInstance()->ValidateLogin($this);
           }]]></code>
         </method>
       </methods>
@@ -145,10 +152,95 @@
             <item id="is_default">
               <rank>30</rank>
             </item>
+            <item id="mfarecoverycodes_list">
+              <rank>40</rank>
+            </item>
           </items>
         </details>
       </presentation>
       <parent>MFAUserSettings</parent>
+    </class>
+    <class id="MFARecoveryCode" _created_in="combodo-mfa-recovery-codes" _delta="define">
+      <properties>
+        <category>bizmodel,searchable</category>
+        <abstract>false</abstract>
+        <db_table>mfa_recovery_code</db_table>
+        <style>
+          <icon>
+            <fileref ref="icons8-list_3bd77585fff0abd39e0cb2cfecbf34a1"/>
+          </icon>
+        </style>
+        <naming>
+          <attributes/>
+        </naming>
+        <reconciliation>
+          <attributes/>
+        </reconciliation>
+      </properties>
+      <fields>
+        <field id="code" xsi:type="AttributeEncryptedString">
+          <sql>code</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+          <validation_pattern/>
+          <tracking_level>none</tracking_level>
+        </field>
+        <field id="status" xsi:type="AttributeEnum">
+          <sql>status</sql>
+          <values>
+            <value id="active">
+              <code>active</code>
+              <rank>10</rank>
+            </value>
+            <value id="inactive">
+              <code>inactive</code>
+              <rank>20</rank>
+            </value>
+          </values>
+          <sort_type/>
+          <default_value>active</default_value>
+          <is_null_allowed>false</is_null_allowed>
+          <display_style/>
+          <dependencies/>
+          <tracking_level>all</tracking_level>
+        </field>
+        <field id="mfausersettingsrecoverycodes_id" xsi:type="AttributeExternalKey">
+          <sql>mfausersettingsrecoverycodes_id</sql>
+          <filter/>
+          <dependencies/>
+          <is_null_allowed>false</is_null_allowed>
+          <target_class>MFAUserSettingsRecoveryCodes</target_class>
+          <on_target_delete>DEL_AUTO</on_target_delete>
+          <tracking_level>all</tracking_level>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <list>
+          <items>
+            <item id="mfausersettingsrecoverycodes_id">
+              <rank>10</rank>
+            </item>
+          </items>
+        </list>
+        <search>
+          <items/>
+        </search>
+        <details>
+          <items>
+            <item id="code">
+              <rank>10</rank>
+            </item>
+            <item id="status">
+              <rank>20</rank>
+            </item>
+            <item id="mfausersettingsrecoverycodes_id">
+              <rank>30</rank>
+            </item>
+          </items>
+        </details>
+      </presentation>
+      <parent>cmdbAbstractObject</parent>
     </class>
   </classes>
   <files>

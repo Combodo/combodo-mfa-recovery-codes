@@ -6,5 +6,9 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Combodo\\iTop\\MFARecoveryCodes\\Controller\\MFARecoveryCodesMyAccountController' => $baseDir . '/src/Controller/MFARecoveryCodesMyAccountController.php',
+    'Combodo\\iTop\\MFARecoveryCodes\\Helper\\MFARecoveryCodesHelper' => $baseDir . '/src/Helper/MFARecoveryCodesHelper.php',
+    'Combodo\\iTop\\MFARecoveryCodes\\Service\\MFARecoveryCodesService' => $baseDir . '/src/Service/MFARecoveryCodesService.php',
+    'Combodo\\iTop\\MFARecoveryCodes\\Service\\MFAUserSettingsRecoveryCodesService' => $baseDir . '/src/Service/MFAUserSettingsRecoveryCodesService.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
 );
