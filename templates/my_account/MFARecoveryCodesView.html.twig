@@ -1,0 +1,19 @@
+{# @copyright   Copyright (C) 2010-2024 Combodo SARL #}
+{# @license     http://opensource.org/licenses/AGPL-3.0 #}
+
+{% extends "MFAUserSettingsConfig.html.twig" %}
+
+{% set sTitle = 'MFA:RC:Config:Title'|dict_s %}
+
+{% block configuration %}
+
+	{% UIFieldSet Standard { sLegend:'MFA:RC:Settings:Title'|dict_s } %}
+		{% UIField Small { sLabel:'MFA:RC:Settings:Code:label'|dict_s } %}
+			{% UIContentBlock ForCode { sCode:sCodes } %}{% EndUIContentBlock %}
+		{% EndUIField %}
+	{% EndUIFieldSet %}
+
+{% endblock %}
+
+{% block default_selection %}
+{% endblock %}
