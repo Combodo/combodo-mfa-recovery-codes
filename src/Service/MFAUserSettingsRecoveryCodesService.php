@@ -6,12 +6,12 @@
 
 namespace Combodo\iTop\MFARecoveryCodes\Service;
 
+use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use DBObjectSet;
 use DBSearch;
 use MetaModel;
 use MFARecoveryCode;
 use MFAUserSettingsRecoveryCodes;
-use ParagonIE\ConstantTime\Base32;
 
 class MFAUserSettingsRecoveryCodesService
 {
@@ -38,7 +38,7 @@ class MFAUserSettingsRecoveryCodesService
 
 		for ($i = 0; $i < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT; $i++) {
 			$oCode = MetaModel::NewObject(MFARecoveryCode::class, [
-				'code' => Base32::encodeUpper(random_bytes(10)),
+				'code' => strtoupper(bin2hex(random_bytes(8))),
 				'mfausersettingsrecoverycodes_id' => $sId,
 			]);
 			$oCode->AllowWrite();
@@ -64,5 +64,16 @@ class MFAUserSettingsRecoveryCodesService
 		return array_values($oCodesLinkSet->GetColumnAsArray('code'));
 	}
 
+	public function RebuildCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings)
+	{
+		$oMFAUserSettingsService = MFAUserSettingsService::GetInstance();
 
+		$bIsValid = $oMFAUserSettingsService->IsValid($oMFAUserSettings);
+		$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, false);
+
+		$this->DeleteCodes($oMFAUserSettings);
+		$this->CreateCodes($oMFAUserSettings);
+
+		$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, $bIsValid);
+	}
 }

@@ -40,7 +40,7 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
 		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
 
-		// Act
+		// When
 		$oService->CreateCodes($oUserSettings);
 
 		// Then
@@ -58,10 +58,33 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
 		$oService->CreateCodes($oUserSettings);
 
-		// Act
+		// When
 		$oService->DeleteCodes($oUserSettings);
 
 		// Then
 		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
+	}
+
+	public function testRebuildCodesGenerateAllDifferentCodes()
+	{
+		// Given
+		$oUser = $this->CreateContactlessUser('NoOrgUser', ItopDataTestCase::$aURP_Profiles['Service Desk Agent'], 'ABCdefg@12345#');
+		$sUserId = $oUser->GetKey();
+		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
+		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
+		$oService->CreateCodes($oUserSettings);
+		$aCodes = $oService->GetCodesAsArray($oUserSettings);
+
+		// When
+		$oService->RebuildCodes($oUserSettings);
+
+		// Then
+		$aNewCodes = $oService->GetCodesAsArray($oUserSettings);
+
+		foreach ($aCodes as $sCode) {
+			foreach ($aNewCodes as $sNewCode) {
+				$this->assertNotEquals($sNewCode, $sCode);
+			}
+		}
 	}
 }

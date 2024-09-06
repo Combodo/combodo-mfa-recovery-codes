@@ -8,11 +8,10 @@ namespace Combodo\iTop\MFARecoveryCodes\Service;
 
 use Combodo\iTop\Application\Helper\Session;
 use Combodo\iTop\MFABase\Helper\MFABaseLog;
-use Combodo\iTop\MFARecoveryCode\Helper\MFARecoveryCodeHelper;
-use Combodo\iTop\MFATotp\Helper\MFATOTPHelper;
+use Combodo\iTop\MFARecoveryCodes\Helper\MFARecoveryCodesHelper;
 use Dict;
 use LoginTwigContext;
-use MFAUserSettingsRecoveryCode;
+use MFAUserSettingsRecoveryCodes;
 use utils;
 
 class MFARecoveryCodesService
@@ -35,9 +34,8 @@ class MFARecoveryCodesService
 
 	public function GetConfigurationURLForMyAccountRedirection(MFAUserSettingsRecoveryCodes $oMFAUserSettings): string
 	{
-		return utils::GetAbsoluteUrlModulePage(MFATOTPHelper::MODULE_NAME, 'index.php', ['operation' => 'MFARecoveryCodesConfig']);
+		return utils::GetAbsoluteUrlModulePage(MFARecoveryCodesHelper::MODULE_NAME, 'index.php', ['operation' => 'MFARecoveryCodesView']);
 	}
-
 
 	public function GetTwigContextForLoginValidation(MFAUserSettingsRecoveryCodes $oMFAUserSettings): LoginTwigContext
 	{
