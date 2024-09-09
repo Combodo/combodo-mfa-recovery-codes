@@ -9,4 +9,10 @@
 Dict::Add('FR FR', 'French', 'Français', array(
 	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
 	'Class:MFAUserSettingsRecoveryCodes' => 'MFA Recovery codes',
+
+	'MFA:RC:Config:Title' => 'MFA Recovery codes configuration',
+	'MFA:RC:Settings:Title' => 'Settings',
+	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
+	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
+	'MFA:RC:Copy:Done' => 'Recovery codes copied to clipboard',
 ));

@@ -9,8 +9,20 @@
 
 	{% UIFieldSet Standard { sLegend:'MFA:RC:Settings:Title'|dict_s } %}
 		{% UIField Small { sLabel:'MFA:RC:Settings:Code:label'|dict_s } %}
-			{% UIContentBlock ForCode { sCode:sCodes } %}{% EndUIContentBlock %}
+			{% UIContentBlock ForCode { sCode:sCodes } %}
+				{% set jscopy = 'WriteClipboardText("' ~ sCodesAsLine ~ '", "' ~ 'MFA:RC:Copy:Done'|dict_s ~ '");' %}
+				{% UIButton IconAction { sIconClasses:'fas fa-clone copypaste', sTooltipText:'MFA:RC:Copy'|dict_s, OnClickJsCode:jscopy } %}
+			{% EndUIContentBlock %}
 		{% EndUIField %}
+
+		{% UIForm Standard {Action:'exec.php' } %}
+			{% UIInput ForHidden { sName:'exec_module', sValue:'combodo-mfa-recovery-codes' } %}
+			{% UIInput ForHidden { sName:'exec_page', sValue:'index.php' } %}
+			{% UIInput ForHidden { sName:'operation', sValue:'RebuildCodes' } %}
+
+			{% UIButton ForDestructiveAction  { sLabel:'MFA:RC:RebuildCodes'|dict_s, bIsSubmit:true, Tooltip:'MFA:RC:RebuildCodes+'|dict_s } %}
+		{% EndUIForm %}
+
 	{% EndUIFieldSet %}
 
 {% endblock %}

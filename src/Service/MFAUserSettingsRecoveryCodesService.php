@@ -6,6 +6,7 @@
 
 namespace Combodo\iTop\MFARecoveryCodes\Service;
 
+use Combodo\iTop\MFABase\Helper\MFABaseException;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use DBObjectSet;
 use DBSearch;
@@ -57,11 +58,26 @@ class MFAUserSettingsRecoveryCodesService
 		}
 	}
 
-	public function GetCodesAsArray(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array
+	public function GetCodesById(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array
 	{
 		$oCodesLinkSet = $oMFAUserSettings->Get('mfarecoverycodes_list');
 
-		return array_values($oCodesLinkSet->GetColumnAsArray('code'));
+		return $oCodesLinkSet->GetColumnAsArray('code');
+	}
+
+
+	public function GetCodesAndStatus(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array
+	{
+		$sId = $oMFAUserSettings->GetKey();
+		$oSearch = DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id");
+		$oSearch->AllowAllData();
+		$oSet = new DBObjectSet($oSearch, [], ['id' => $sId]);
+		$aCodes = [];
+		while ($oCode = $oSet->Fetch()) {
+			$aCodes[$oCode->Get('code')] = $oCode->Get('status');
+		}
+
+		return $aCodes;
 	}
 
 	public function RebuildCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings)
@@ -75,5 +91,36 @@ class MFAUserSettingsRecoveryCodesService
 		$this->CreateCodes($oMFAUserSettings);
 
 		$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, $bIsValid);
+	}
+
+
+	/**
+	 * @param MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 * @param string $sCode
+	 *
+	 * @return void
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
+	public function InvalidateCode(MFAUserSettingsRecoveryCodes $oMFAUserSettings, string $sCode): void
+	{
+		try {
+			$aCodes = array_flip($this->GetCodesById($oMFAUserSettings));
+			if (!array_key_exists($sCode, $aCodes)) {
+				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+			}
+			/** @var \DBObject $oCode */
+			$oCode = MetaModel::GetObject(MFARecoveryCode::class, $aCodes[$sCode], false, true);
+			if (is_null($oCode)) {
+				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+			}
+			$oCode->Set('status', 'inactive');
+			$oCode->AllowWrite();
+			$oCode->DBUpdate();
+		} catch (MFABaseException $e) {
+			throw $e;
+		}
+		catch (\Exception $e) {
+			throw new MFABaseException(__METHOD__.': Error', 0, $e);
+		}
 	}
 }

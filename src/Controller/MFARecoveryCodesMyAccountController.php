@@ -7,10 +7,12 @@
 namespace Combodo\iTop\MFARecoveryCodes\Controller;
 
 use Combodo\iTop\Application\TwigBase\Controller\Controller;
+use Combodo\iTop\MFABase\Helper\MFABaseHelper;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
 use MFAUserSettingsRecoveryCodes;
 use UserRights;
+use utils;
 
 class MFARecoveryCodesMyAccountController extends Controller
 {
@@ -21,18 +23,31 @@ class MFARecoveryCodesMyAccountController extends Controller
 		$sUserId = UserRights::GetUserId();
 		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
 		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();
-		$aCodes = $oUserSettingsRecoveryCodesService->GetCodesAsArray($oUserSettings);
+		$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
 
 		if (count($aCodes) < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT) {
 			$oUserSettingsRecoveryCodesService->RebuildCodes($oUserSettings);
-			$aCodes = $oUserSettingsRecoveryCodesService->GetCodesAsArray($oUserSettings);
+			$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
 		}
 
 		$aParams['aCodes'] = $aCodes;
 		$aParams['sCodes'] = implode("\n", $aCodes);
+		$aParams['sCodesAsLine'] = implode("\\n", $aCodes);
 
 		MFAUserSettingsService::GetInstance()->SetIsValid($oUserSettings);
+		$this->AddLinkedScript(utils::GetAbsoluteUrlModulesRoot().MFABaseHelper::MODULE_NAME.'/assets/js/MFABase.js');
 
 		$this->DisplayPage($aParams);
+	}
+
+	public function OperationRebuildCodes()
+	{
+		$sUserId = UserRights::GetUserId();
+		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
+		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();
+		$oUserSettingsRecoveryCodesService->RebuildCodes($oUserSettings);
+
+		$this->m_sOperation = 'MFARecoveryCodesView';
+		$this->OperationMFARecoveryCodesView();
 	}
 }

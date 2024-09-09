@@ -29,7 +29,7 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 
 		// Then
 		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
-		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
+		$this->assertCount(0, $oService->GetCodesAndStatus($oUserSettings));
 	}
 
 	public function testCreateCodes()
@@ -44,9 +44,36 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 		$oService->CreateCodes($oUserSettings);
 
 		// Then
-		$aCodes = $oService->GetCodesAsArray($oUserSettings);
+		$aCodes = $oService->GetCodesById($oUserSettings);
 		var_export($aCodes);
-		$this->assertCount(MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT, $aCodes);
+		$this->assertCount(MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT, $aCodes, 'The amount of codes is exact at creation');
+
+		$aCodes = $oService->GetCodesAndStatus($oUserSettings);
+		var_export($aCodes);
+		foreach ($aCodes as $sCode => $sStatus) {
+			$this->assertEquals('active', $sStatus, 'All the codes are valid when created');
+		}
+	}
+
+	public function testCodesInvalidatedExistingCode()
+	{
+		// Given
+		$oUser = $this->CreateContactlessUser('NoOrgUser', ItopDataTestCase::$aURP_Profiles['Service Desk Agent'], 'ABCdefg@12345#');
+		$sUserId = $oUser->GetKey();
+		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
+		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
+		$oService->CreateCodes($oUserSettings);
+		$aCodes = $oService->GetCodesAndStatus($oUserSettings);
+		$aCodeValues = array_keys($aCodes);
+		$sFirstCode = reset($aCodeValues);
+
+		// When
+		$oService->InvalidateCode($oUserSettings, $sFirstCode);
+
+		// Then
+		$aCodes = $oService->GetCodesAndStatus($oUserSettings);
+		var_export($aCodes);
+		$this->assertEquals('inactive', $aCodes[$sFirstCode] ?? 'not found', 'Code should be inactive when invalidated');
 	}
 
 	public function testDeleteCodes()
@@ -62,7 +89,7 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 		$oService->DeleteCodes($oUserSettings);
 
 		// Then
-		$this->assertCount(0, $oService->GetCodesAsArray($oUserSettings));
+		$this->assertCount(0, $oService->GetCodesAndStatus($oUserSettings));
 	}
 
 	public function testRebuildCodesGenerateAllDifferentCodes()
@@ -73,13 +100,13 @@ class MFAUserSettingsRecoveryCodesServiceTest extends ItopDataTestCase
 		$oUserSettings = $this->createObject(\MFAUserSettingsRecoveryCodes::class, ['user_id' => $sUserId]);
 		$oService = MFAUserSettingsRecoveryCodesService::GetInstance();
 		$oService->CreateCodes($oUserSettings);
-		$aCodes = $oService->GetCodesAsArray($oUserSettings);
+		$aCodes = $oService->GetCodesById($oUserSettings);
 
 		// When
 		$oService->RebuildCodes($oUserSettings);
 
 		// Then
-		$aNewCodes = $oService->GetCodesAsArray($oUserSettings);
+		$aNewCodes = $oService->GetCodesById($oUserSettings);
 
 		foreach ($aCodes as $sCode) {
 			foreach ($aNewCodes as $sNewCode) {

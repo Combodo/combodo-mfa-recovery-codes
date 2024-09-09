@@ -38,7 +38,39 @@
           <edit_when/>
         </field>
       </fields>
+      <event_listeners>
+        <event_listener id="EVENT_DB_CHECK_TO_DELETE">
+          <event>EVENT_DB_CHECK_TO_DELETE</event>
+          <callback>EvtCheckToDeleteMFAUserSettingsRecoveryCodes</callback>
+          <rank>0</rank>
+        </event_listener>
+      </event_listeners>
       <methods>
+        <method id="EvtCheckToDeleteMFAUserSettingsRecoveryCodes">
+          <comment>/**
+            * Event Listener for EVENT_DB_BEFORE_WRITE
+            * An object is about to be written into the database.
+            * The object can be modified.
+            *
+            * @param Combodo\iTop\Service\Events\EventData $oEventData Event data object
+            */
+          </comment>
+          <static>false</static>
+          <access>public</access>
+          <type>EventListener</type>
+          <code><![CDATA[
+          public function EvtCheckToDeleteMFAUserSettingsRecoveryCodes(Combodo\iTop\Service\Events\EventData $oEventData)
+          {
+            // Delete the codes before the object
+            $aCodes = Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService::GetInstance()->GetCodesById($this);
+            foreach (array_keys($aCodes) as $sId) {
+                $oCode = MetaModel::GetObject(MFARecoveryCode::class, $sId, false, true);
+                $oCode->AllowDelete();
+                $oCode->DBDelete();
+            }
+            $this->Reload();
+          }]]></code>
+        </method>
         <method id="GetConfigurationURLForMyAccountRedirection">
           <comment>/**
             *
@@ -214,7 +246,8 @@
           <tracking_level>all</tracking_level>
         </field>
       </fields>
-      <methods/>
+      <methods>
+      </methods>
       <presentation>
         <list>
           <items>
