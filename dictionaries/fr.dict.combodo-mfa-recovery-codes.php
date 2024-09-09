@@ -15,4 +15,6 @@ Dict::Add('FR FR', 'French', 'Français', array(
 	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
 	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
 	'MFA:RC:Copy:Done' => 'Recovery codes copied to clipboard',
+	'MFA:RC:RebuildCodes' => 'Rebuild recovery codes',
+	'MFA:RC:RebuildCodes+' => 'This operation will invalidate the previous recovery codes',
 ));
