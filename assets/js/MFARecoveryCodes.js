@@ -4,6 +4,6 @@
 function CheckLoginCode() {
 	var sCode = $("#recovery_code").val();
 	if (sCode.length === 16) {
-		$("#totp_form").trigger("submit");
+		$("#mfa_recovery_form").trigger("submit");
 	}
 }

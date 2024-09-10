@@ -17,7 +17,7 @@ require_once __DIR__ . "/AbstractMFATest.php";
  * @backupGlobals disabled
  *
  */
-class MFATOTPLoginExtensionIntegrationTest extends AbstractMFATest {
+class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	//iTop called from outside
 	//users need to be persisted in DB
 	const USE_TRANSACTION = false;
@@ -100,7 +100,7 @@ class MFATOTPLoginExtensionIntegrationTest extends AbstractMFATest {
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
-		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the TOTP App code validation screen');
+		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
 		$this->AssertStringContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
@@ -122,7 +122,7 @@ class MFATOTPLoginExtensionIntegrationTest extends AbstractMFATest {
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
-		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the TOTP App code validation screen');
+		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
 		$this->AssertStringContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
@@ -144,7 +144,7 @@ class MFATOTPLoginExtensionIntegrationTest extends AbstractMFATest {
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
-		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the TOTP App code validation screen');
+		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
 		$sWelcomeWithoutIopApplicationName = str_replace(ITOP_APPLICATION, "", Dict::S('UI:WelcomeToITop'));
 		$this->AssertStringContains($sWelcomeWithoutIopApplicationName, $sOutput, 'The page should be the welcome page');
 		$sLoggedInAsMessage = Dict::Format('UI:LoggedAsMessage', '', $this->oUser->Get('login'));

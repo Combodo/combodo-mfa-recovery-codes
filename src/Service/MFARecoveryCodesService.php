@@ -40,15 +40,12 @@ class MFARecoveryCodesService
 	public function GetTwigContextForLoginValidation(MFAUserSettingsRecoveryCodes $oMFAUserSettings): LoginTwigContext
 	{
 		$oLoginContext = new LoginTwigContext();
-		/** @var \MFAUserSettingsTOTP $oMFAUserSettings */
-		$oTOTPService = new OTPService($oMFAUserSettings);
 
 		$aData = [];
-		$aData['sTitle'] = Dict::S('MFATOTP:App:Validation:Title');
-		$aData['sLabel'] = $oTOTPService->sLabel;
-		$aData['sIssuer'] = $oTOTPService->sIssuer;
 
-		$oLoginContext->SetLoaderPath(MODULESROOT.MFATOTPHelper::MODULE_NAME.'/templates/login');
+		$aData['sTitle'] = Dict::S('MFA:RC:CodeValidation:Title');
+
+		$oLoginContext->SetLoaderPath(MODULESROOT.MFARecoveryCodesHelper::MODULE_NAME.'/templates/login');
 		$oLoginContext->AddBlockExtension('mfa_validation', new \LoginBlockExtension('MFARecoveryCodesValidate.html.twig', $aData));
 		$oLoginContext->AddBlockExtension('mfa_title', new \LoginBlockExtension('MFARecoveryCodesTitle.html.twig', $aData));
 		$oLoginContext->AddJsFile(MFARecoveryCodesHelper::GetJSFile());
