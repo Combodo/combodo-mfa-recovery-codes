@@ -20,7 +20,7 @@ class MFAUserSettingsRecoveryCodesService
 
 	private static MFAUserSettingsRecoveryCodesService $oInstance;
 
-	protected function __construct()
+	public function __construct()
 	{
 	}
 

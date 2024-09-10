@@ -39,7 +39,21 @@ class MFARecoveryCodesService
 
 	public function GetTwigContextForLoginValidation(MFAUserSettingsRecoveryCodes $oMFAUserSettings): LoginTwigContext
 	{
-		return new LoginTwigContext();
+		$oLoginContext = new LoginTwigContext();
+		/** @var \MFAUserSettingsTOTP $oMFAUserSettings */
+		$oTOTPService = new OTPService($oMFAUserSettings);
+
+		$aData = [];
+		$aData['sTitle'] = Dict::S('MFATOTP:App:Validation:Title');
+		$aData['sLabel'] = $oTOTPService->sLabel;
+		$aData['sIssuer'] = $oTOTPService->sIssuer;
+
+		$oLoginContext->SetLoaderPath(MODULESROOT.MFATOTPHelper::MODULE_NAME.'/templates/login');
+		$oLoginContext->AddBlockExtension('mfa_validation', new \LoginBlockExtension('MFARecoveryCodesValidate.html.twig', $aData));
+		$oLoginContext->AddBlockExtension('mfa_title', new \LoginBlockExtension('MFARecoveryCodesTitle.html.twig', $aData));
+		$oLoginContext->AddJsFile(MFARecoveryCodesHelper::GetJSFile());
+
+		return $oLoginContext;
 	}
 
 	private function ValidateCode(MFAUserSettingsRecoveryCodes $oMFAUserSettings, array &$aData): ?LoginTwigContext
@@ -62,7 +76,35 @@ class MFARecoveryCodesService
 
 	public function ValidateLogin(MFAUserSettingsRecoveryCodes $oMFAUserSettings): bool
 	{
-		return true;
+		$sCode = utils::ReadPostedParam('recovery_code', 0, utils::ENUM_SANITIZATION_FILTER_STRING);
+		if ($sCode === 0) {
+			MFABaseLog::Debug("Recovery code validation : no 'recovery_code' received", null, [ 'user_id' => $oMFAUserSettings->Get('user_id')]);
+			return false;
+		}
+
+		if ($sCode === false) {
+			MFABaseLog::Debug("Recovery code validation : invalid 'recovery_code' received (sanitization)", null, [ 'user_id' => $oMFAUserSettings->Get('user_id') ]);
+
+			unset($_POST['recovery_code']);
+			return false;
+		}
+
+		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
+
+		try{
+			$oMFAUserSettingsRecoveryCodesService->InvalidateCode($oMFAUserSettings, $sCode);
+			MFABaseLog::Debug("Recovery code validation : correct 'recovery_code' received", null, [ 'user_id' => $oMFAUserSettings->Get('user_id') ]);
+			return true;
+		} catch(\Exception $e){
+			MFABaseLog::Info("Recovery code validation : wrong 'recovery_code' received", null,
+				[
+					'user_id' => $oMFAUserSettings->Get('user_id'),
+					'exception' => $e
+				]);
+			unset($_POST['recovery_code']);
+		}
+
+		return false;
 	}
 
 
