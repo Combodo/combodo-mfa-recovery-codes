@@ -65,10 +65,11 @@ class MFARecoveryCodesService
 		return $oLoginContext;
 	}
 
-
 	public function HasToDisplayValidation(MFAUserSettingsRecoveryCodes $oMFAUserSettings): bool
 	{
-		return true;
+		$sCode = utils::ReadPostedParam('recovery_code', false, utils::ENUM_SANITIZATION_FILTER_STRING);
+
+		return ($sCode === false);
 	}
 
 	public function ValidateLogin(MFAUserSettingsRecoveryCodes $oMFAUserSettings): bool
