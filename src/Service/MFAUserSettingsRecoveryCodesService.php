@@ -113,6 +113,9 @@ class MFAUserSettingsRecoveryCodesService
 			if (is_null($oCode)) {
 				throw new MFABaseException(__METHOD__.': Invalid recovery code');
 			}
+			if ($oCode->Get('status') === 'inactive') {
+				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+			}
 			$oCode->Set('status', 'inactive');
 			$oCode->AllowWrite();
 			$oCode->DBUpdate();

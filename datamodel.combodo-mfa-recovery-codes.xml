@@ -251,8 +251,11 @@
       <presentation>
         <list>
           <items>
-            <item id="mfausersettingsrecoverycodes_id">
+            <item id="code">
               <rank>10</rank>
+            </item>
+            <item id="status">
+              <rank>20</rank>
             </item>
           </items>
         </list>
