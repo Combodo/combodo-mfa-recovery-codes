@@ -10,6 +10,7 @@ use Combodo\iTop\MFABase\Helper\MFABaseException;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use DBObjectSet;
 use DBSearch;
+use Exception;
 use MetaModel;
 use MFARecoveryCode;
 use MFAUserSettingsRecoveryCodes;
@@ -33,64 +34,123 @@ class MFAUserSettingsRecoveryCodesService
 		return static::$oInstance;
 	}
 
+	/**
+	 * @param \MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 *
+	 * @return void
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
 	public function CreateCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings): void
 	{
-		$sId = $oMFAUserSettings->GetKey();
+		try {
+			$sId = $oMFAUserSettings->GetKey();
 
-		for ($i = 0; $i < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT; $i++) {
-			$oCode = MetaModel::NewObject(MFARecoveryCode::class, [
-				'code' => strtoupper(bin2hex(random_bytes(8))),
-				'mfausersettingsrecoverycodes_id' => $sId,
-			]);
-			$oCode->AllowWrite();
-			$oCode->DBInsert();
+			for ($i = 0; $i < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT; $i++) {
+				$oCode = MetaModel::NewObject(MFARecoveryCode::class, [
+					'code' => strtoupper(bin2hex(random_bytes(8))),
+					'mfausersettingsrecoverycodes_id' => $sId,
+				]);
+				$oCode->AllowWrite();
+				$oCode->DBInsert();
+			}
+			$oMFAUserSettings->Reload();
+		} catch (MFABaseException $e) {
+			throw $e;
+		} catch (Exception $e) {
+			throw new MFABaseException(__METHOD__.' failed', 0, $e);
 		}
-		$oMFAUserSettings->Reload();
 	}
 
+	/**
+	 * @param \MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 *
+	 * @return void
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
 	public function DeleteCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings): void
 	{
-		$sId = $oMFAUserSettings->GetKey();
-		$oSet = new DBObjectSet(DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id"), [], ['id' => $sId]);
-		while ($oCode = $oSet->Fetch()) {
-			$oCode->AllowDelete();
-			$oCode->DBDelete();
+		try {
+			$sId = $oMFAUserSettings->GetKey();
+			$oSet = new DBObjectSet(DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id"), [], ['id' => $sId]);
+			while ($oCode = $oSet->Fetch()) {
+				$oCode->AllowDelete();
+				$oCode->DBDelete();
+			}
+		} catch (MFABaseException $e) {
+			throw $e;
+		} catch (Exception $e) {
+			throw new MFABaseException(__METHOD__.' failed', 0, $e);
 		}
 	}
 
+	/**
+	 * @param \MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 *
+	 * @return array
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
 	public function GetCodesById(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array
 	{
-		$oCodesLinkSet = $oMFAUserSettings->Get('mfarecoverycodes_list');
+		try {
+			$oCodesLinkSet = $oMFAUserSettings->Get('mfarecoverycodes_list');
 
-		return $oCodesLinkSet->GetColumnAsArray('code');
+			return $oCodesLinkSet->GetColumnAsArray('code');
+		} catch (MFABaseException $e) {
+			throw $e;
+		} catch (Exception $e) {
+			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+		}
 	}
 
-
+	/**
+	 * @param \MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 *
+	 * @return array
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
 	public function GetCodesAndStatus(MFAUserSettingsRecoveryCodes $oMFAUserSettings): array
 	{
-		$sId = $oMFAUserSettings->GetKey();
-		$oSearch = DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id");
-		$oSearch->AllowAllData();
-		$oSet = new DBObjectSet($oSearch, [], ['id' => $sId]);
-		$aCodes = [];
-		while ($oCode = $oSet->Fetch()) {
-			$aCodes[$oCode->Get('code')] = $oCode->Get('status');
-		}
+		try {
+			$sId = $oMFAUserSettings->GetKey();
+			$oSearch = DBSearch::FromOQL("SELECT MFARecoveryCode WHERE mfausersettingsrecoverycodes_id=:id");
+			$oSearch->AllowAllData();
+			$oSet = new DBObjectSet($oSearch, [], ['id' => $sId]);
+			$aCodes = [];
+			while ($oCode = $oSet->Fetch()) {
+				$aCodes[$oCode->Get('code')] = $oCode->Get('status');
+			}
 
-		return $aCodes;
+			return $aCodes;
+		} catch (MFABaseException $e) {
+			throw $e;
+		} catch (Exception $e) {
+			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+		}
 	}
 
-	public function RebuildCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings)
+	/**
+	 * @param \MFAUserSettingsRecoveryCodes $oMFAUserSettings
+	 *
+	 * @return void
+	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
+	 */
+	public function RebuildCodes(MFAUserSettingsRecoveryCodes $oMFAUserSettings): void
 	{
-		$oMFAUserSettingsService = MFAUserSettingsService::GetInstance();
+		try {
+			$oMFAUserSettingsService = MFAUserSettingsService::GetInstance();
 
-		$bIsValid = $oMFAUserSettingsService->IsValid($oMFAUserSettings);
-		$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, false);
+			$bIsValid = $oMFAUserSettingsService->IsValid($oMFAUserSettings);
+			$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, false);
 
-		$this->DeleteCodes($oMFAUserSettings);
-		$this->CreateCodes($oMFAUserSettings);
+			$this->DeleteCodes($oMFAUserSettings);
+			$this->CreateCodes($oMFAUserSettings);
 
-		$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, $bIsValid);
+			$oMFAUserSettingsService->SetIsValid($oMFAUserSettings, $bIsValid);
+		} catch (MFABaseException $e) {
+			throw $e;
+		} catch (Exception $e) {
+			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+		}
 	}
 
 
@@ -121,9 +181,8 @@ class MFAUserSettingsRecoveryCodesService
 			$oCode->DBUpdate();
 		} catch (MFABaseException $e) {
 			throw $e;
-		}
-		catch (\Exception $e) {
-			throw new MFABaseException(__METHOD__.': Error', 0, $e);
+		} catch (\Exception $e) {
+			throw new MFABaseException(__METHOD__.': failed', 0, $e);
 		}
 	}
 }
