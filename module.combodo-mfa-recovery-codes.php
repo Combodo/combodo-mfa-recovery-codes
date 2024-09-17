@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'combodo-mfa-recovery-codes/3.2.0',
+	'combodo-mfa-recovery-codes/1.0.0',
 	array(
 		// Identification
 		//
@@ -15,7 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'combodo-mfa-base/3.2.0',
+			'combodo-mfa-base/1.0.0',
 		),
 		'mandatory' => true,
 		'visible' => true,
@@ -48,6 +48,3 @@ SetupWebPage::AddModule(
 		),
 	)
 );
-
-
-?>
