@@ -7,6 +7,7 @@
  */
 
 Dict::Add('FR FR', 'French', 'Français', array(
+	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'View Recovery codes',
 	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
 	'Class:MFAUserSettingsRecoveryCodes' => 'MFA Recovery codes',
 
