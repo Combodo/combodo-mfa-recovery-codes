@@ -75,10 +75,16 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	public function testValidationScreenDisplay()
 	{
 		// Arrange
-		$this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], true);
+		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+		$this->CreateSetting(\MFAUserSettingsRecoveryCodes::class, $this->oUser->GetKey(), 'yes', [], false);
 
 		// Act
-		$sOutput = $this->CallItopUrl('/pages/UI.php', ['auth_user' => $this->oUser->Get('login'), 'auth_pwd' => $this->sPassword]);
+		$sOutput = $this->CallItopUrl('/pages/UI.php',
+			[
+				'auth_user' => $this->oUser->Get('login'),
+				'auth_pwd' => $this->sPassword,
+				'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
+			]);
 
 		// Assert
 		$sTitle = Dict::S('MFA:RC:CodeValidation:Title');
@@ -90,13 +96,16 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	{
 		// Arrange
 		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);
+		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
 
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => 'WrongCode',
+			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword]);
 
@@ -109,7 +118,9 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	{
 		// Arrange
 		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);
+		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
@@ -119,6 +130,7 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => 'WrongCode',
+			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword]);
 
@@ -131,7 +143,9 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	{
 		// Arrange
 		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
@@ -141,6 +155,7 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => $sCode,
+			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword]);
 
