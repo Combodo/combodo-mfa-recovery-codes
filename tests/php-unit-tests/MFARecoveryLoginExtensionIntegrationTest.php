@@ -143,7 +143,7 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	{
 		// Arrange
 		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);		
 		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
 
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
