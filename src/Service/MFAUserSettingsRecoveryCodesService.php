@@ -57,7 +57,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (Exception $e) {
-			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.' failed', 0, $e);
 		}
 	}
 
@@ -79,7 +79,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (Exception $e) {
-			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.' failed', 0, $e);
 		}
 	}
 
@@ -98,7 +98,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (Exception $e) {
-			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.' failed', 0, $e);
 		}
 	}
 
@@ -124,7 +124,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (Exception $e) {
-			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.' failed', 0, $e);
 		}
 	}
 
@@ -149,7 +149,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (Exception $e) {
-			throw new MFABaseException(__METHOD__.' failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.' failed', 0, $e);
 		}
 	}
 
@@ -166,15 +166,15 @@ class MFAUserSettingsRecoveryCodesService
 		try {
 			$aCodes = array_flip($this->GetCodesById($oMFAUserSettings));
 			if (!array_key_exists($sCode, $aCodes)) {
-				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
 			}
 			/** @var \DBObject $oCode */
 			$oCode = MetaModel::GetObject(MFARecoveryCode::class, $aCodes[$sCode], false, true);
 			if (is_null($oCode)) {
-				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
 			}
 			if ($oCode->Get('status') === 'inactive') {
-				throw new MFABaseException(__METHOD__.': Invalid recovery code');
+				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
 			}
 			$oCode->Set('status', 'inactive');
 			$oCode->AllowWrite();
@@ -182,7 +182,7 @@ class MFAUserSettingsRecoveryCodesService
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (\Exception $e) {
-			throw new MFABaseException(__METHOD__.': failed', 0, $e);
+			throw new MFABaseException(__FUNCTION__.': failed', 0, $e);
 		}
 	}
 }
