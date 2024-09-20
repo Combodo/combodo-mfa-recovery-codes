@@ -3,7 +3,7 @@
   <classes>
     <class id="MFAUserSettingsRecoveryCodes" _created_in="combodo-mfa-recovery-codes" _delta="define">
       <properties>
-        <category>grant_by_profile,searchable,DeniableMFAMode</category>
+        <category>grant_by_profile,DeniableMFAMode</category>
         <abstract>false</abstract>
         <db_table>mfa_user_settings_recovery_code</db_table>
         <style>
