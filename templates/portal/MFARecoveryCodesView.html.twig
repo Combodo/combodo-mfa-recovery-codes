@@ -18,9 +18,16 @@
 			</div>
 			<pre>{{ aData.sCodes }}</pre>
 
-			<div class="form_btn_regular">
-				<input class="btn btn-primary form_btn_submit" type="submit" value="{{ 'MFA:RC:RebuildCodes'|dict_s }}" data-tooltip-content="{{ 'MFA:RC:RebuildCodes+'|dict_s }}">
-			</div>
+			{% set sFormId = "form_mfa_configure" ~ aData.sAction ~ "_" ~ aData.sClass %}
+			<form id="{{ sFormId }}" class="" style="display:inline-block;" method="POST">
+				<input type="hidden" name="action" value="{{ aData.sAction }}">
+				<input type="hidden" name="operation" value="rebuild_code">
+				<input type="hidden" name="class" value="{{ aData.sClass }}">
+				<div class="form_btn_regular">
+					<input onclick="$('#{{ sFormId }}').submit(); return false;" class="btn btn-primary form_btn_submit" type="submit"
+					       value="{{ 'MFA:RC:RebuildCodes'|dict_s }}" data-tooltip-content="{{ 'MFA:RC:RebuildCodes+'|dict_s }}">
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

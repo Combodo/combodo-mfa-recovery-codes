@@ -15,6 +15,7 @@ use Combodo\iTop\Portal\Twig\PortalBlockExtension;
 use Combodo\iTop\Portal\Twig\PortalTwigContext;
 use MFAUserSettingsRecoveryCodes;
 use UserRights;
+use utils;
 
 class MFAPortalTabSectionExtension implements iPortalTabSectionExtension
 {
@@ -56,6 +57,11 @@ class MFAPortalTabSectionExtension implements iPortalTabSectionExtension
 		$sUserId = UserRights::GetUserId();
 		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
 		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();
+
+		if (utils::ReadPostedParam("operation") === "rebuild_code"){
+			$oUserSettingsRecoveryCodesService->RebuildCodes($oUserSettings);
+		}
+
 		$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
 
 		if (count($aCodes) < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT) {
@@ -63,6 +69,8 @@ class MFAPortalTabSectionExtension implements iPortalTabSectionExtension
 			$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
 		}
 
+		$aData['sAction'] = MFAPortalService::GetInstance()->GetSelectedAction();
+		$aData['sClass'] = MFAUserSettingsRecoveryCodes::class;
 		$aData['aCodes'] = $aCodes;
 		$aData['sCodes'] = implode("\n", $aCodes);
 		$aData['sCodesAsLine'] = implode("\\n", $aCodes);
