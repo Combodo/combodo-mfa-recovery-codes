@@ -23,20 +23,11 @@ class ComposerAutoloaderInit270dae7b144a189078a429cd4a46b7da
         }
 
         spl_autoload_register(array('ComposerAutoloaderInit270dae7b144a189078a429cd4a46b7da', 'loadClassLoader'), true, true);
-        self::$loader = $loader = new \Composer\Autoload\ClassLoader(\dirname(\dirname(__FILE__)));
+        self::$loader = $loader = new \Composer\Autoload\ClassLoader(\dirname(__DIR__));
         spl_autoload_unregister(array('ComposerAutoloaderInit270dae7b144a189078a429cd4a46b7da', 'loadClassLoader'));
 
-        $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION') && (!function_exists('zend_loader_file_encoded') || !zend_loader_file_encoded());
-        if ($useStaticLoader) {
-            require __DIR__ . '/autoload_static.php';
-
-            call_user_func(\Composer\Autoload\ComposerStaticInit270dae7b144a189078a429cd4a46b7da::getInitializer($loader));
-        } else {
-            $classMap = require __DIR__ . '/autoload_classmap.php';
-            if ($classMap) {
-                $loader->addClassMap($classMap);
-            }
-        }
+        require __DIR__ . '/autoload_static.php';
+        call_user_func(\Composer\Autoload\ComposerStaticInit270dae7b144a189078a429cd4a46b7da::getInitializer($loader));
 
         $loader->setClassMapAuthoritative(true);
         $loader->register(true);

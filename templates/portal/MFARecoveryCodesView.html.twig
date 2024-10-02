@@ -4,7 +4,7 @@
 <div class="col-sm-12">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title">{{ 'Menu:MFAUserSettings'|dict_s }}</h3>
+			<h3 class="panel-title">{{ 'MFA:RC:Config:Title'|dict_s }}</h3>
 		</div>
 		<div class="panel-body">
 			<div class="form_alerts">
@@ -13,7 +13,14 @@
 				<div class="alert alert-error alert-danger" role="alert" style="display: none;"></div>
 			</div>
 
-			{{ sCodes }}
+			<div class="form_field_label">
+				<label class="control-label">{{ 'MFA:RC:Settings:Code:label'|dict_s }}</label>
+			</div>
+			<pre>{{ aData.sCodes }}</pre>
+
+			<div class="form_btn_regular">
+				<input class="btn btn-primary form_btn_submit" type="submit" value="{{ 'MFA:RC:RebuildCodes'|dict_s }}" data-tooltip-content="{{ 'MFA:RC:RebuildCodes+'|dict_s }}">
+			</div>
 		</div>
 	</div>
 </div>

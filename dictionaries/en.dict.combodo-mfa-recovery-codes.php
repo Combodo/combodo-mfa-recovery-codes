@@ -15,7 +15,7 @@ Dict::Add('EN US', 'English', 'English', array(
 	'MFA:RC:CodeValidation:Title' => 'MFA Recovery codes authentication',
 	'MFA:RC:EnterCode' => 'Recovery code',
 
-	'MFA:RC:Config:Title' => 'MFA Recovery codes configuration',
+	'MFA:RC:Config:Title' => 'MFA Recovery codes view',
 	'MFA:RC:Settings:Title' => 'Settings',
 	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
 	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
