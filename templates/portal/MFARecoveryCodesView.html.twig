@@ -24,6 +24,7 @@
 			{% set sFormId = "form_mfa_configure" ~ aData.sAction ~ "_" ~ aData.sClass %}
 			<form id="{{ sFormId }}" class="" style="display:inline-block;" method="POST">
 				<input type="hidden" name="action" value="{{ aData.sAction }}">
+				<input type="hidden" name="transaction_id" value="{{ aData.sTransactionId }}">
 				<input type="hidden" name="operation" value="rebuild_code">
 				<input type="hidden" name="class" value="{{ aData.sClass }}">
 				<div class="form_btn_regular">
