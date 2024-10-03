@@ -8,9 +8,12 @@
 		</div>
 		<div class="panel-body">
 			<div class="form_alerts">
-				<div class="alert alert-success" role="alert" style="display: none;"></div>
-				<div class="alert alert-warning" role="alert" style="display: none;"></div>
-				<div class="alert alert-error alert-danger" role="alert" style="display: none;"></div>
+				{% if aData.sMessage is defined %}
+					<div class="alert alert-success" role="alert">{{ aData.sMessage }}</div>
+				{% endif %}
+				{% if aData.sError is defined %}
+					<div class="alert alert-error alert-danger" role="alert">{{ aData.sError }}</div>
+				{% endif %}
 			</div>
 
 			<div class="form_field_label">

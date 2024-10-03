@@ -23,7 +23,7 @@ class ComposerStaticInit270dae7b144a189078a429cd4a46b7da
     public static $classMap = array (
         'Combodo\\iTop\\MFARecoveryCodes\\Controller\\MFARecoveryCodesMyAccountController' => __DIR__ . '/../..' . '/src/Controller/MFARecoveryCodesMyAccountController.php',
         'Combodo\\iTop\\MFARecoveryCodes\\Helper\\MFARecoveryCodesHelper' => __DIR__ . '/../..' . '/src/Helper/MFARecoveryCodesHelper.php',
-        'Combodo\\iTop\\MFARecoveryCodes\\Hook\\MFAPortalTabSectionExtension' => __DIR__ . '/../..' . '/src/Hook/MFAPortalTabSectionExtension.php',
+        'Combodo\\iTop\\MFARecoveryCodes\\Hook\\MFAPortalTabContentExtension' => __DIR__ . '/../..' . '/src/Hook/MFAPortalTabContentExtension.php',
         'Combodo\\iTop\\MFARecoveryCodes\\Service\\MFARecoveryCodesService' => __DIR__ . '/../..' . '/src/Service/MFARecoveryCodesService.php',
         'Combodo\\iTop\\MFARecoveryCodes\\Service\\MFAUserSettingsRecoveryCodesService' => __DIR__ . '/../..' . '/src/Service/MFAUserSettingsRecoveryCodesService.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',

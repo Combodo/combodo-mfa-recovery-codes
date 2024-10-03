@@ -10,6 +10,7 @@ use Combodo\iTop\MFABase\Service\MFAPortalService;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use Combodo\iTop\MFARecoveryCodes\Helper\MFARecoveryCodesHelper;
 use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
+use Combodo\iTop\Portal\Hook\iPortalTabContentExtension;
 use Combodo\iTop\Portal\Hook\iPortalTabSectionExtension;
 use Combodo\iTop\Portal\Twig\PortalBlockExtension;
 use Combodo\iTop\Portal\Twig\PortalTwigContext;
@@ -17,8 +18,10 @@ use MFAUserSettingsRecoveryCodes;
 use UserRights;
 use utils;
 
-class MFAPortalTabSectionExtension implements iPortalTabSectionExtension
+class MFAPortalTabContentExtension implements iPortalTabContentExtension
 {
+	/** @var array Current recovery codes */
+	private array $aCodes;
 
 	/**
 	 * @inheritDoc
@@ -49,34 +52,43 @@ class MFAPortalTabSectionExtension implements iPortalTabSectionExtension
 		return 'p_user_profile_brick';
 	}
 
-	public function GetPortalTwigContext(): PortalTwigContext
+	/**
+	 * Handle actions based on posted vars
+	 */
+	public function HandlePortalForm(array &$aData): void
+	{
+		$sUserId = UserRights::GetUserId();
+		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
+
+		if (utils::ReadPostedParam('operation') === 'rebuild_code') {
+			MFAUserSettingsRecoveryCodesService::GetInstance()->RebuildCodes($oUserSettings);
+		} else {
+			$this->aCodes = MFAUserSettingsRecoveryCodesService::GetInstance()->GetCodesById($oUserSettings);
+
+			if (count($this->aCodes) < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT) {
+				MFAUserSettingsRecoveryCodesService::GetInstance()->RebuildCodes($oUserSettings);
+			}
+		}
+
+		$this->aCodes = MFAUserSettingsRecoveryCodesService::GetInstance()->GetCodesById($oUserSettings);
+		MFAUserSettingsService::GetInstance()->SetIsValid($oUserSettings);
+	}
+
+	/**
+	 * List twigs and variables for the tab content per block
+	 *
+	 * @return PortalTwigContext
+	 */
+	public function GetPortalTabContentTwigs(): PortalTwigContext
 	{
 		$oPortalTwigContext = new PortalTwigContext();
 		$sPath = MFARecoveryCodesHelper::MODULE_NAME.'/templates/portal/MFARecoveryCodesView.html.twig';
 
-		$sUserId = UserRights::GetUserId();
-		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
-		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();
-
-		if (utils::ReadPostedParam("operation") === "rebuild_code"){
-			$oUserSettingsRecoveryCodesService->RebuildCodes($oUserSettings);
-		}
-
-		$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
-
-		if (count($aCodes) < MFAUserSettingsRecoveryCodesService::RECOVERY_CODES_COUNT) {
-			$oUserSettingsRecoveryCodesService->RebuildCodes($oUserSettings);
-			$aCodes = $oUserSettingsRecoveryCodesService->GetCodesById($oUserSettings);
-		}
-
 		$aData['sAction'] = MFAPortalService::GetInstance()->GetSelectedAction();
 		$aData['sClass'] = MFAUserSettingsRecoveryCodes::class;
-		$aData['aCodes'] = $aCodes;
-		$aData['sCodes'] = implode("\n", $aCodes);
-		$aData['sCodesAsLine'] = implode("\\n", $aCodes);
-
-		MFAUserSettingsService::GetInstance()->SetIsValid($oUserSettings);
-
+		$aData['aCodes'] = $this->aCodes;
+		$aData['sCodes'] = implode("\n", $this->aCodes);
+		$aData['sCodesAsLine'] = implode("\\n", $this->aCodes);
 
 		$oPortalTwigContext->AddBlockExtension('html', new PortalBlockExtension($sPath, $aData));
 
