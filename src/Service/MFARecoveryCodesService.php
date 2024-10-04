@@ -8,6 +8,7 @@ namespace Combodo\iTop\MFARecoveryCodes\Service;
 
 use Combodo\iTop\Application\Helper\Session;
 use Combodo\iTop\MFABase\Helper\MFABaseException;
+use Combodo\iTop\MFABase\Helper\MFABaseHelper;
 use Combodo\iTop\MFABase\Helper\MFABaseLog;
 use Combodo\iTop\MFARecoveryCodes\Helper\MFARecoveryCodesHelper;
 use Dict;
@@ -64,6 +65,7 @@ class MFARecoveryCodesService
 
 			$aData = [];
 			$aData['sTitle'] = Dict::S('MFA:RC:CodeValidation:Title');
+			$aData['sTransactionId'] = utils::GetNewTransactionId();
 
 			$oLoginContext->SetLoaderPath(MODULESROOT.MFARecoveryCodesHelper::MODULE_NAME.'/templates/login');
 			$oLoginContext->AddBlockExtension('mfa_validation', new \LoginBlockExtension('MFARecoveryCodesValidate.html.twig', $aData));
@@ -132,6 +134,8 @@ class MFARecoveryCodesService
 	public function ValidateLogin(MFAUserSettingsRecoveryCodes $oMFAUserSettings): bool
 	{
 		try {
+			MFABaseHelper::GetInstance()->ValidateTransactionId();
+
 			$sCode = utils::ReadPostedParam('recovery_code', 0, utils::ENUM_SANITIZATION_FILTER_STRING);
 			MFABaseLog::Debug("Recovery code received", null, ['code' => $sCode]);
 			if ($sCode === 0) {
