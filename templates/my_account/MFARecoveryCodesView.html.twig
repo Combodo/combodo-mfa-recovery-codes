@@ -8,6 +8,11 @@
 {% block configuration %}
 
 	{% UIFieldSet Standard { sLegend:'MFA:RC:Settings:Title'|dict_s } %}
+		{% UIContentBlock Standard {} %}
+			{{ 'MFA:MFAUserSettingsRecoveryCodes:Description'|dict_s }}
+			<div class="ibo-v-spacer"></div>
+		{% EndUIContentBlock %}
+
 		{% UIField Small { sLabel:'MFA:RC:Settings:Code:label'|dict_s } %}
 			{% UIContentBlock ForCode { sCode:sCodes } %}
 				{% set jscopy = 'WriteClipboardText("' ~ sCodesAsLine ~ '", "' ~ 'MFA:RC:Copy:Done'|dict_s ~ '");' %}

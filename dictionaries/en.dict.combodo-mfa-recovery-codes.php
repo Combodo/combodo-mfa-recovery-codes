@@ -8,6 +8,7 @@
 
 Dict::Add('EN US', 'English', 'English', array(
 	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'View Recovery codes',
+	'MFA:MFAUserSettingsRecoveryCodes:Description' => 'Recovery codes can be used to access your account in the event you lose access to your device and cannot receive two-factor authentication codes.',
 
 	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
 	'Class:MFAUserSettingsRecoveryCodes' => 'MFA Recovery codes',
