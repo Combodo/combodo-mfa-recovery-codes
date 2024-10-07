@@ -105,6 +105,7 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => 'WrongCode',
+			'transaction_id' => $this->GetNewGeneratedTransId($this->oUser->Get('login')),
 			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword]);
@@ -130,6 +131,7 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => 'WrongCode',
+			'transaction_id' => $this->GetNewGeneratedTransId($this->oUser->Get('login')),
 			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword]);
@@ -152,22 +154,35 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		$sCode = array_pop($aCodes);
 
 		// Act
+		$sLogin = $this->oUser->Get('login');
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
 			'recovery_code' => $sCode,
+			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
 			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
-			'auth_user' => $this->oUser->Get('login'),
+			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
 		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
 		$sWelcomeWithoutIopApplicationName = str_replace(ITOP_APPLICATION, "", Dict::S('UI:WelcomeToITop'));
 		$this->AssertStringContains($sWelcomeWithoutIopApplicationName, $sOutput, 'The page should be the welcome page');
-		$sLoggedInAsMessage = Dict::Format('UI:LoggedAsMessage', '', $this->oUser->Get('login'));
+		$sLoggedInAsMessage = Dict::Format('UI:LoggedAsMessage', '', $sLogin);
 		$this->AssertStringContains($sLoggedInAsMessage, $sOutput, 'The proper user should be connected');
 
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesAndStatus($oActiveSetting);
 		$sStatus=$aCodes[$sCode] ?? 'notfound';
 		$this->assertEquals("inactive", $sStatus, "Recovery code once used should be not reusable");
+	}
+
+	private function GetNewGeneratedTransId(string $sLogin) : string {
+		\UserRights::Login($sLogin);
+		$sTransId = \utils::GetNewTransactionId();
+		\UserRights::_ResetSessionCache();
+
+		/*$sPath = APPROOT."data/transactions/$sTransId";
+		chmod($sPath, "555");
+		var_dump(file_get_contents($sPath));*/
+		return $sTransId;
 	}
 }

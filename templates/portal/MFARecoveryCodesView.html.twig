@@ -1,0 +1,39 @@
+{# @copyright   Copyright (C) 2010-2024 Combodo SARL #}
+{# @license     http://opensource.org/licenses/AGPL-3.0 #}
+
+<div class="col-sm-12">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{ 'MFA:RC:Config:Title'|dict_s }}</h3>
+		</div>
+		<div class="panel-body">
+			<div class="form_alerts">
+				{% if aData.sMessage is defined %}
+					<div class="alert alert-success" role="alert">{{ aData.sMessage }}</div>
+				{% endif %}
+				{% if aData.sError is defined %}
+					<div class="alert alert-error alert-danger" role="alert">{{ aData.sError }}</div>
+				{% endif %}
+			</div>
+
+			<div class="form_field_label">
+				<label class="control-label">{{ 'MFA:RC:Settings:Code:label'|dict_s }}</label>
+			</div>
+			<pre>{{ aData.sCodes }}</pre>
+
+			{% set sFormId = "form_mfa_configure" ~ aData.sAction ~ "_" ~ aData.sClass %}
+			<form id="{{ sFormId }}" class="" style="display:inline-block;" method="POST">
+				<input type="hidden" name="action" value="{{ aData.sAction }}">
+				<input type="hidden" name="transaction_id" value="{{ aData.sTransactionId }}">
+				<input type="hidden" name="operation" value="rebuild_code">
+				<input type="hidden" name="class" value="{{ aData.sClass }}">
+				<div class="form_btn_regular">
+					<input onclick="$('#{{ sFormId }}').submit(); return false;" class="btn btn-primary form_btn_submit" type="submit"
+					       value="{{ 'MFA:RC:RebuildCodes'|dict_s }}" data-tooltip-content="{{ 'MFA:RC:RebuildCodes+'|dict_s }}">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
