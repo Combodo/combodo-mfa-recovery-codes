@@ -1,14 +1,21 @@
 <?php
 
-namespace Combodo\iTop\MFABase\Test;
+namespace Combodo\iTop\MFABase\Test\Integration;
 
+use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
+use Combodo\iTop\MFABase\Test\AbstractMFATest;
+use Combodo\iTop\MFABase\Test\MFAAbstractConfigurationTestInterface;
+use Combodo\iTop\MFABase\Test\MFAAbstractValidationTestInterface;
+use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
 use Combodo\iTop\Test\UnitTest\ItopDataTestCase;
 use Dict;
 use MetaModel;
-use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
+use MFAAdminRule;
 use User;
 
-require_once __DIR__ . "/AbstractMFATest.php";
+require_once dirname(__DIR__) . "/AbstractMFATest.php";
+require_once __DIR__ . "/MFAAbstractValidationTestInterface.php";
+require_once __DIR__ . "/MFAAbstractConfigurationTestInterface.php";
 
 /**
  *
@@ -17,7 +24,7 @@ require_once __DIR__ . "/AbstractMFATest.php";
  * @backupGlobals disabled
  *
  */
-class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
+class MfaLoginRecoveryCodeIntegrationTest extends AbstractMFATest implements MFAAbstractValidationTestInterface {
 	//iTop called from outside
 	//users need to be persisted in DB
 	const USE_TRANSACTION = false;
@@ -25,12 +32,18 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 	protected string $sConfigTmpBackupFile;
 	protected string $sPassword;
 	protected User $oUser;
-	protected string  $sUniqId;
+	protected string $sUniqId;
+
+	public function GetMFAUserSettingsRecoveryCodes(): \MFAUserSettingsRecoveryCodes {
+		$oActiveSetting = $this->CreateSetting(\MFAUserSettingsRecoveryCodes::class, $this->oUser->GetKey(), 'yes', [], false);
+		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+
+		return $oActiveSetting;
+	}
 
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->RequireOnceUnitTestFile("AbstractMFATest.php");
 		$sConfigPath = MetaModel::GetConfig()->GetLoadedFile();
 
 		clearstatcache();
@@ -53,6 +66,8 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 
 		$this->oiTopConfig = new \Config($sConfigPath);
 		$this->oiTopConfig->SetModuleSetting('combodo-mfa-base', 'enabled', true);
+		//$this->oiTopConfig->Set('transactions_enabled', false);
+		//$this->oiTopConfig->Set('log_transactions', true);
 		$this->SaveItopConfFile();
 	}
 
@@ -71,43 +86,49 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		$_SESSION = [];
 	}
 
+	public function CheckThereIsAReturnToLoginPageLink($sOutput) {
+		$sForceRestartLoginLabelLink = Dict::S('Login:MFA:Restart:Label');
+		$sHtml = <<<HTML
+<a onclick="$('#mfa_restart_login_form').submit();">$sForceRestartLoginLabelLink</a></div>
+HTML;
+		$this->AssertStringContains($sHtml, $sOutput, 'The page should be contain a link to return to login page');
+	}
 
-	public function testValidationScreenDisplay()
+	public function testValidationFirstScreenDisplay()
 	{
 		// Arrange
-		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
-		$this->CreateSetting(\MFAUserSettingsRecoveryCodes::class, $this->oUser->GetKey(), 'yes', [], false);
+		$this->GetMFAUserSettingsRecoveryCodes();
 
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php',
 			[
 				'auth_user' => $this->oUser->Get('login'),
 				'auth_pwd' => $this->sPassword,
-				'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
+				'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
 			]);
 
 		// Assert
 		$sTitle = Dict::S('MFA:RC:CodeValidation:Title');
 		$this->AssertStringContains($sTitle, $sOutput, 'The page should be the Recovery code validation screen');
 		$this->AssertStringContains('<input type="text" id="recovery_code" name="recovery_code" value="" size="16"', $sOutput, 'The page should have a code input form');
+		$this->CheckThereIsAReturnToLoginPageLink($sOutput);
+
 	}
 
-	public function testValidationCodeFailed_WrongCode()
+	public function testValidationFailed()
 	{
 		// Arrange
-		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);
-		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
 
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
-
 		// Act
+		$sLogin = $this->oUser->Get('login');
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
 			'recovery_code' => 'WrongCode',
-			'transaction_id' => $this->GetNewGeneratedTransId($this->oUser->Get('login')),
-			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
-			'auth_user' => $this->oUser->Get('login'),
+			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
+			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
@@ -115,38 +136,28 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 		$this->AssertStringNotContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
-	public function testValidationCodeFailed_AlreadyUsedCode()
+	public function testValidationForceReturnToLoginPage()
 	{
 		// Arrange
-		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);
-		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
-
-		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
-		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
-		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
-		$sCode = array_pop($aCodes);
-		$oMFAUserSettingsRecoveryCodesService->InvalidateCode($oActiveSetting, $sCode);
+		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
 
 		// Act
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
-			'recovery_code' => 'WrongCode',
-			'transaction_id' => $this->GetNewGeneratedTransId($this->oUser->Get('login')),
-			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
 			'auth_user' => $this->oUser->Get('login'),
-			'auth_pwd' => $this->sPassword]);
+			'auth_pwd' => $this->sPassword,
+			'mfa_restart_login' => 'true',
+			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
+			]
+		);
 
 		// Assert
-		$this->AssertStringContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
-		$this->AssertStringNotContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
+		$this->AssertStringContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
-	public function testValidationCodeOK()
+	public function testValidationOK()
 	{
 		// Arrange
-		/** @var \MFAUserSettingsRecoveryCodes $oActiveSetting */
-		$oActiveSetting = $this->CreateSetting('MFAUserSettingsRecoveryCodes', $this->oUser->GetKey(), 'yes', [], false);
-		$this->CreateSetting(\MFAUserSettingsTOTPApp::class, $this->oUser->GetKey(), 'yes', [], true);
+		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
 
 		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
@@ -155,11 +166,10 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 
 		// Act
 		$sLogin = $this->oUser->Get('login');
-		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
 		$sOutput = $this->CallItopUrl('/pages/UI.php', [
-			'recovery_code' => $sCode,
 			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
-			'selected_mfa_mode' => "MFAUserSettingsRecoveryCodes",
+			'recovery_code' => $sCode,
+			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
 			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword]);
 
@@ -172,17 +182,37 @@ class MFARecoveryLoginExtensionIntegrationTest extends AbstractMFATest {
 
 		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesAndStatus($oActiveSetting);
 		$sStatus=$aCodes[$sCode] ?? 'notfound';
-		$this->assertEquals("inactive", $sStatus, "Recovery code once used should be not reusable");
+		$this->assertEquals("inactive", $sStatus, "Recovery code once used should be not reusable");}
+
+	public function testValidationFailDueToInvalidTransactionId()
+	{
+		// Arrange
+		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
+
+		$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
+		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
+		$aCodes = $oMFAUserSettingsRecoveryCodesService->GetCodesById($oActiveSetting);
+		$sCode = array_pop($aCodes);
+
+		// Act
+		$sLogin = $this->oUser->Get('login');
+		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+			'transaction_id' => "WrongID",
+			'recovery_code' => $sCode,
+			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
+			'auth_user' => $sLogin,
+			'auth_pwd' => $this->sPassword]);
+
+		// Assert
+		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
+		$this->AssertStringContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
-	private function GetNewGeneratedTransId(string $sLogin) : string {
+	private function GetNewGeneratedTransId(string $sLogin) {
 		\UserRights::Login($sLogin);
 		$sTransId = \utils::GetNewTransactionId();
 		\UserRights::_ResetSessionCache();
 
-		/*$sPath = APPROOT."data/transactions/$sTransId";
-		chmod($sPath, "555");
-		var_dump(file_get_contents($sPath));*/
 		return $sTransId;
 	}
 }
