@@ -204,8 +204,8 @@ HTML;
 			'auth_pwd' => $this->sPassword]);
 
 		// Assert
-		$this->AssertStringNotContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
-		$this->AssertStringContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
+		$this->AssertStringContains(Dict::S('MFA:RC:CodeValidation:Title'), $sOutput, 'The page should NOT be the Recovery code validation screen');
+		$this->AssertStringNotContains(Dict::S('UI:Login:Welcome'), $sOutput, 'The page should be the initial login page');
 	}
 
 	private function GetNewGeneratedTransId(string $sLogin) {

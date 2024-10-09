@@ -143,13 +143,14 @@ HTML;
 			'transaction_id' => '753951',
 			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword,
+			'operation' => 'Action',
 			'Action' => "add:" . \MFAUserSettingsRecoveryCodes::class,
 		]);
 
 		// Assert
 		$oActiveSetting = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($this->oUser->GetKey(), \MFAUserSettingsRecoveryCodes::class);
-		$this->assertEquals('yes', $oActiveSetting->Get('validated'));
-		$this->AssertStringContains(Dict::S('MFA:RC:Config:Title'), $sOutput, 'The page should be the welcome page');
+		$this->AssertStringNotContains(Dict::S('MFA:RC:Config:Title'), $sOutput, 'The page should be the welcome page');
+		$this->assertEquals('no', $oActiveSetting->Get('validated'));
 	}
 
 	public function testConfigurationFailed()

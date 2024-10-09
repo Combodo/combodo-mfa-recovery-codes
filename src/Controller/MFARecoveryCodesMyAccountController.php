@@ -20,6 +20,8 @@ class MFARecoveryCodesMyAccountController extends Controller
 	{
 		$aParams = [];
 
+		MFABaseHelper::GetInstance()->ValidateTransactionId();
+
 		$sUserId = UserRights::GetUserId();
 		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
 		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();
@@ -31,6 +33,7 @@ class MFARecoveryCodesMyAccountController extends Controller
 		}
 
 		$aParams['aCodes'] = $aCodes;
+		$aParams['sTransactionId'] = utils::GetNewTransactionId();
 		$aParams['sCodes'] = implode("\n", $aCodes);
 		$aParams['sCodesAsLine'] = implode("\\n", $aCodes);
 
@@ -42,6 +45,7 @@ class MFARecoveryCodesMyAccountController extends Controller
 
 	public function OperationRebuildCodes()
 	{
+		MFABaseHelper::GetInstance()->ValidateTransactionId();
 		$sUserId = UserRights::GetUserId();
 		$oUserSettings = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($sUserId, MFAUserSettingsRecoveryCodes::Class);
 		$oUserSettingsRecoveryCodesService = MFAUserSettingsRecoveryCodesService::GetInstance();

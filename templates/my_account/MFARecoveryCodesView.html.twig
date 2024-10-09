@@ -23,6 +23,7 @@
 		{% UIForm Standard {Action:'exec.php' } %}
 			{% UIInput ForHidden { sName:'exec_module', sValue:'combodo-mfa-recovery-codes' } %}
 			{% UIInput ForHidden { sName:'exec_page', sValue:'index.php' } %}
+			{% UIInput ForHidden { sName:'transaction_id', sValue: sTransactionId } %}
 			{% UIInput ForHidden { sName:'operation', sValue:'RebuildCodes' } %}
 
 			{% UIButton ForDestructiveAction  { sLabel:'MFA:RC:RebuildCodes'|dict_s, bIsSubmit:true, Tooltip:'MFA:RC:RebuildCodes+'|dict_s } %}
