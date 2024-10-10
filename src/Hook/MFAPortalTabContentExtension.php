@@ -10,16 +10,16 @@ use Combodo\iTop\MFABase\Service\MFAPortalService;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use Combodo\iTop\MFARecoveryCodes\Helper\MFARecoveryCodesHelper;
 use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
-use Combodo\iTop\Portal\Hook\iPortalTabContentExtension;
+use Combodo\iTop\Portal\Hook\iUserProfileTabContentExtension;
 use Combodo\iTop\Portal\Twig\PortalBlockExtension;
 use Combodo\iTop\Portal\Twig\PortalTwigContext;
 use MFAUserSettingsRecoveryCodes;
 use UserRights;
 use utils;
 
-if (interface_exists('Combodo\iTop\Portal\Hook\iPortalTabContentExtension')) {
+if (interface_exists(iUserProfileTabContentExtension::class)) {
 
-	class MFAPortalTabContentExtension implements iPortalTabContentExtension
+	class MFAPortalTabContentExtension implements iUserProfileTabContentExtension
 	{
 		/** @var array Current recovery codes */
 		private array $aCodes;
@@ -46,11 +46,6 @@ if (interface_exists('Combodo\iTop\Portal\Hook\iPortalTabContentExtension')) {
 		public function GetSectionRank(): float
 		{
 			return 0;
-		}
-
-		public function GetTarget(): string
-		{
-			return 'p_user_profile_brick';
 		}
 
 		/**
