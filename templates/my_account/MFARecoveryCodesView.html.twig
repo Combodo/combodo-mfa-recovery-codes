@@ -7,6 +7,8 @@
 
 {% block configuration %}
 
+	{% UIAlert ForWarning { sTitle:'MFA:RC:Config:Warning'|dict_s } %}{% EndUIAlert %}
+
 	{% UIFieldSet Standard { sLegend:'MFA:RC:Settings:Title'|dict_s } %}
 		{% UIContentBlock Standard {} %}
 			{{ 'MFA:MFAUserSettingsRecoveryCodes:Description'|dict_s }}
