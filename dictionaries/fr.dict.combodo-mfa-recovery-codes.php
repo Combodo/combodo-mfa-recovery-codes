@@ -7,29 +7,28 @@
  */
 
 Dict::Add('FR FR', 'French', 'Français', array(
-	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'View Recovery codes',
-	'MFA:MFAUserSettingsRecoveryCodes:Description' => 'Provides a list of 10 single use recovery codes to access your account if you lose access to your device',
+	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'Voir les codes de récupération',
+	'MFA:MFAUserSettingsRecoveryCodes:Description' => 'Fournit une liste de 10 codes de récupération à usage unique pour accéder à votre compte si vous perdez l\'accès à votre appareil',
 
-	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
+	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Utiliser un code de récupération',
 
-	'MFA:RC:CodeValidation:Title' => 'MFA Recovery codes authentication',
-	'MFA:RC:EnterCode' => 'Recovery code',
+	'MFA:RC:CodeValidation:Title' => 'Entrez le code de récupération',
+	'MFA:RC:EnterCode' => 'Code',
+	'MFA:RC:Config:Title' => 'Codes de récupération MFA',
+	'MFA:RC:Config:Warning' => 'Conservez vos codes de récupération de façon aussi sécurisée que votre mot de passe. Nous vous recommandons de les enregistrer avec un gestionnaire de mots de passe',
+	'MFA:RC:Settings:Title' => 'Réglages',
+	'MFA:RC:Settings:Code:label' => 'Liste des codes de récupération',
+	'MFA:RC:Copy' => 'Copier les codes de récupération dans le presse-papiers',
+	'MFA:RC:Copy:Done' => 'Codes de récupération copiés dans le presse-papiers',
+	'MFA:RC:RebuildCodes' => 'Générer de nouveaux codes de récupération',
+	'MFA:RC:RebuildCodes+' => 'Lorsque de nouveaux codes de récupération sont générés, les anciens ne fonctionneront plus',
 
-	'MFA:RC:Config:Title' => 'MFA Recovery codes',
-	'MFA:RC:Config:Warning' => 'Keep your recovery codes as safe as your password. We recommend saving them with a password manager',
-	'MFA:RC:Settings:Title' => 'Settings',
-	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
-	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
-	'MFA:RC:Copy:Done' => 'Recovery codes copied to clipboard',
-	'MFA:RC:RebuildCodes' => 'Rebuild recovery codes',
-	'MFA:RC:RebuildCodes+' => 'This operation will invalidate the previous recovery codes',
+	'Class:MFAUserSettingsRecoveryCodes' => 'Codes de récupération',
+	'Class:MFAUserSettingsRecoveryCodes/Attribute:mfarecoverycodes_list' => 'Liste des codes de récupération',
 
-	'Class:MFAUserSettingsRecoveryCodes' => 'Recovery codes',
-	'Class:MFAUserSettingsRecoveryCodes/Attribute:mfarecoverycodes_list' => 'Recovery codes list',
-
-	'Class:MFARecoveryCode' => 'Recovery code',
+	'Class:MFARecoveryCode' => 'Code de récupération',
 	'Class:MFARecoveryCode/Attribute:code' => 'Code',
-	'Class:MFARecoveryCode/Attribute:status' => 'Status',
-	'Class:MFARecoveryCode/Attribute:mfausersettingsrecoverycodes_id' => 'User settings',
+	'Class:MFARecoveryCode/Attribute:status' => 'Statut',
+	'Class:MFARecoveryCode/Attribute:mfausersettingsrecoverycodes_id' => 'Réglages utilisateur',
 
 ));

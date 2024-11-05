@@ -12,7 +12,7 @@ Dict::Add('EN US', 'English', 'English', array(
 
 	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
 
-	'MFA:RC:CodeValidation:Title' => 'MFA Recovery codes authentication',
+	'MFA:RC:CodeValidation:Title' => 'Enter recovery code',
 	'MFA:RC:EnterCode' => 'Recovery code',
 
 	'MFA:RC:Config:Title' => 'MFA Recovery codes',
@@ -21,8 +21,8 @@ Dict::Add('EN US', 'English', 'English', array(
 	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
 	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
 	'MFA:RC:Copy:Done' => 'Recovery codes copied to clipboard',
-	'MFA:RC:RebuildCodes' => 'Rebuild recovery codes',
-	'MFA:RC:RebuildCodes+' => 'This operation will invalidate the previous recovery codes',
+	'MFA:RC:RebuildCodes' => 'Generate new recovery codes',
+	'MFA:RC:RebuildCodes+' => 'When new recovery codes are generated, the old ones won\'t work anymore',
 
 	'Class:MFAUserSettingsRecoveryCodes' => 'Recovery codes',
 	'Class:MFAUserSettingsRecoveryCodes/Attribute:mfarecoverycodes_list' => 'Recovery codes list',
