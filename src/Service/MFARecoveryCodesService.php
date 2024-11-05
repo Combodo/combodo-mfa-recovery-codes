@@ -64,6 +64,7 @@ class MFARecoveryCodesService
 			$oLoginContext = new LoginTwigContext();
 
 			$aData = [];
+			$aData['sTitle'] = Dict::S('Login:MFA:Validation:Title');
 			$aData['sTransactionId'] = utils::GetNewTransactionId();
 
 			$oLoginContext->SetLoaderPath(MODULESROOT.MFARecoveryCodesHelper::MODULE_NAME.'/templates/login');
