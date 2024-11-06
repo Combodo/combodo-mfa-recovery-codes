@@ -7,9 +7,7 @@
         <abstract>false</abstract>
         <db_table>mfa_user_settings_recovery_code</db_table>
         <style>
-          <icon>
-            <fileref ref="icons8-list_3bd77585fff0abd39e0cb2cfecbf34a1"/>
-          </icon>
+          <icon>assets/img/icons8-access.svg</icon>
         </style>
         <naming>
           <attributes>
