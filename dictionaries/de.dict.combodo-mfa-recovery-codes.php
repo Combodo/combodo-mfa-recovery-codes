@@ -2,34 +2,30 @@
 /**
  * Localized data
  *
- * @copyright   Copyright (C) 2013 XXXXX
+ * @copyright   Copyright (C) 2024 Combodo SAS
  * @license     http://opensource.org/licenses/AGPL-3.0
+ * @author      Lars Kaltefleiter <lars.kaltefleiter@itomig.de>
  */
 
-Dict::Add('EN US', 'English', 'English', array(
-	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'View Recovery codes',
-	'MFA:MFAUserSettingsRecoveryCodes:Description' => 'Provides a list of 10 single use recovery codes to access your account if you lose access to your device',
-
-	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Use recovery code',
-
-	'MFA:RC:CodeValidation:Title' => 'Enter recovery code',
-	'MFA:RC:EnterCode' => 'Recovery code',
-
-	'MFA:RC:Config:Title' => 'MFA Recovery codes',
-	'MFA:RC:Config:Warning' => 'Keep your recovery codes as safe as your password. We recommend saving them with a password manager',
-	'MFA:RC:Settings:Title' => 'Settings',
-	'MFA:RC:Settings:Code:label' => 'List of recovery codes',
-	'MFA:RC:Copy' => 'Copy recovery codes to clipboard',
-	'MFA:RC:Copy:Done' => 'Recovery codes copied to clipboard',
-	'MFA:RC:RebuildCodes' => 'Generate new recovery codes',
-	'MFA:RC:RebuildCodes+' => 'When new recovery codes are generated, the old ones won\'t work anymore',
-
-	'Class:MFAUserSettingsRecoveryCodes' => 'Recovery codes',
-	'Class:MFAUserSettingsRecoveryCodes/Attribute:mfarecoverycodes_list' => 'Recovery codes list',
-
-	'Class:MFARecoveryCode' => 'Recovery code',
+Dict::Add('DE DE', 'German', 'Deutsch', array(
+	'combodo-mfa-recovery-codes/Operation:MFARecoveryCodesView/Title' => 'Recovery-Codes anzeigen',
+	'MFA:MFAUserSettingsRecoveryCodes:Description' => 'Bietet eine Liste von 10 einmal verwendbaren Recovery-Codes, um auf Ihr Konto zuzugreifen, wenn Sie Zugriff auf Ihr Gerät verlieren',
+	'MFA:login:switch:label:MFAUserSettingsRecoveryCodes' => 'Recovery-Codes verwenden',
+	'MFA:RC:CodeValidation:Title' => 'Recovery-Codes eingeben',
+	'MFA:RC:EnterCode' => 'Recovery-Codes',
+	'MFA:RC:Config:Title' => 'MFA-Recovery-Codes',
+	'MFA:RC:Config:Warning' => 'Behalten Sie Ihre Recovery-Codes so sicher wie Ihr Passwort. Wir empfehlen, sie mit eine Passwortdatenbank zu speichern',
+	'MFA:RC:Settings:Title' => 'Einstellungen',
+	'MFA:RC:Settings:Code:label' => 'Liste der Recovery-Codes',
+	'MFA:RC:Copy' => 'Recovery-Codes in die Zwischenablage kopieren',
+	'MFA:RC:Copy:Done' => 'Recovery-Codes wurden in die Zwischenablage kopiert',
+	'MFA:RC:RebuildCodes' => 'Neue Recovery-Codes generieren',
+	'MFA:RC:RebuildCodes+' => 'Wenn neue Recovery-Codes generiert werden, werden die alten nicht mehr gültig sein.',
+	'Class:MFAUserSettingsRecoveryCodes' => 'Recovery-Codes',
+	'Class:MFAUserSettingsRecoveryCodes/Attribute:mfarecoverycodes_list' => 'Liste der Recovery-Codes',
+	'Class:MFARecoveryCode' => 'Recovery-Code',
 	'Class:MFARecoveryCode/Attribute:code' => 'Code',
 	'Class:MFARecoveryCode/Attribute:status' => 'Status',
-	'Class:MFARecoveryCode/Attribute:mfausersettingsrecoverycodes_id' => 'User settings',
+	'Class:MFARecoveryCode/Attribute:mfausersettingsrecoverycodes_id' => 'Benutzereinstellungen',
 
 ));
