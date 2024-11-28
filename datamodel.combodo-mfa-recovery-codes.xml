@@ -12,12 +12,7 @@
         <naming>
           <attributes>
             <attribute id="user_id_friendlyname"/>
-            <attribute id="finalclass"/>
           </attributes>
-          <complementary_attributes>
-            <attribute id="user_id_friendlyname"/>
-            <attribute id="finalclass"/>
-          </complementary_attributes>
         </naming>
         <reconciliation>
           <attributes>
@@ -158,14 +153,14 @@
       <presentation>
         <list>
           <items>
-            <item id="user_id">
+            <item id="finalclass">
               <rank>10</rank>
             </item>
             <item id="validated">
-              <rank>20</rank>
+              <rank>30</rank>
             </item>
             <item id="is_default">
-              <rank>30</rank>
+              <rank>40</rank>
             </item>
           </items>
         </list>
