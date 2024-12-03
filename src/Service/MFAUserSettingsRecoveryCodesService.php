@@ -7,6 +7,7 @@
 namespace Combodo\iTop\MFARecoveryCodes\Service;
 
 use Combodo\iTop\MFABase\Helper\MFABaseException;
+use Combodo\iTop\MFABase\Helper\MFABaseLog;
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
 use DBObjectSet;
 use DBSearch;
@@ -158,27 +159,38 @@ class MFAUserSettingsRecoveryCodesService
 	 * @param MFAUserSettingsRecoveryCodes $oMFAUserSettings
 	 * @param string $sCode
 	 *
-	 * @return void
+	 * @return bool false if failed
 	 * @throws \Combodo\iTop\MFABase\Helper\MFABaseException
 	 */
-	public function InvalidateCode(MFAUserSettingsRecoveryCodes $oMFAUserSettings, string $sCode): void
+	public function InvalidateCode(MFAUserSettingsRecoveryCodes $oMFAUserSettings, string $sCode): bool
 	{
 		try {
 			$aCodes = array_flip($this->GetCodesById($oMFAUserSettings));
 			if (!array_key_exists($sCode, $aCodes)) {
-				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
+				MFABaseLog::Debug("Recovery code validation : INVALID 'recovery_code' received", null, ['user_id' => $oMFAUserSettings->Get('user_id')]);
+
+				return false;
 			}
+
 			/** @var \DBObject $oCode */
 			$oCode = MetaModel::GetObject(MFARecoveryCode::class, $aCodes[$sCode], false, true);
 			if (is_null($oCode)) {
-				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
+				MFABaseLog::Debug("Recovery code validation : INVALID 'recovery_code' received", null, ['user_id' => $oMFAUserSettings->Get('user_id')]);
+
+				return false;
 			}
+
 			if ($oCode->Get('status') === 'inactive') {
-				throw new MFABaseException(__FUNCTION__.': Invalid recovery code');
+				MFABaseLog::Debug("Recovery code validation : INVALID 'recovery_code' received", null, ['user_id' => $oMFAUserSettings->Get('user_id')]);
+
+				return false;
 			}
+
 			$oCode->Set('status', 'inactive');
 			$oCode->AllowWrite();
 			$oCode->DBUpdate();
+
+			return true;
 		} catch (MFABaseException $e) {
 			throw $e;
 		} catch (\Exception $e) {

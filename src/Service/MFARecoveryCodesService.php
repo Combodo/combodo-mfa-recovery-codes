@@ -10,6 +10,7 @@ use Combodo\iTop\Application\Helper\Session;
 use Combodo\iTop\MFABase\Helper\MFABaseException;
 use Combodo\iTop\MFABase\Helper\MFABaseHelper;
 use Combodo\iTop\MFABase\Helper\MFABaseLog;
+use Combodo\iTop\MFABase\Service\MFABaseLoginService;
 use Combodo\iTop\MFARecoveryCodes\Helper\MFARecoveryCodesHelper;
 use Dict;
 use Exception;
@@ -66,6 +67,9 @@ class MFARecoveryCodesService
 			$aData = [];
 			$aData['sTitle'] = Dict::S('Login:MFA:Validation:Title');
 			$aData['sTransactionId'] = utils::GetNewTransactionId();
+			if (Session::IsSet(MFABaseLoginService::MFA_LOGIN_VALIDATION_ERROR)) {
+				$aData['sError'] = Dict::S('Login:MFA:Validation:Error');
+			}
 
 			$oLoginContext->SetLoaderPath(MODULESROOT.MFARecoveryCodesHelper::MODULE_NAME.'/templates/login');
 			$oLoginContext->AddBlockExtension('mfa_validation', new \LoginBlockExtension('MFARecoveryCodesValidate.html.twig', $aData));
@@ -153,7 +157,11 @@ class MFARecoveryCodesService
 
 			$oMFAUserSettingsRecoveryCodesService = new MFAUserSettingsRecoveryCodesService();
 
-			$oMFAUserSettingsRecoveryCodesService->InvalidateCode($oMFAUserSettings, $sCode);
+			if (!$oMFAUserSettingsRecoveryCodesService->InvalidateCode($oMFAUserSettings, $sCode)) {
+				unset($_POST['recovery_code']);
+
+				return false;
+			}
 			MFABaseLog::Debug("Recovery code validation : correct 'recovery_code' received", null, ['user_id' => $oMFAUserSettings->Get('user_id')]);
 
 			return true;
