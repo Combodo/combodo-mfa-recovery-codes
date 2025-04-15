@@ -67,6 +67,7 @@ class MFARecoveryCodesService
 			$aData = [];
 			$aData['sTitle'] = Dict::S('Login:MFA:Validation:Title');
 			$aData['sTransactionId'] = utils::GetNewTransactionId();
+			MFABaseHelper::GetInstance()->PassPostedParams($aData);
 			if (Session::IsSet(MFABaseLoginService::MFA_LOGIN_VALIDATION_ERROR)) {
 				$aData['sError'] = Dict::S('Login:MFA:Validation:Error');
 			}

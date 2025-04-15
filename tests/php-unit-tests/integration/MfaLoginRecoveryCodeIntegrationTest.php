@@ -101,18 +101,32 @@ HTML;
 		$this->GetMFAUserSettingsRecoveryCodes();
 
 		// Act
+		$aPostFields = [
+			'auth_user'         => $this->oUser->Get('login'),
+			'auth_pwd'          => $this->sPassword,
+			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
+		];
 		$sOutput = $this->CallItopUrl('/pages/UI.php',
-			[
-				'auth_user' => $this->oUser->Get('login'),
-				'auth_pwd' => $this->sPassword,
-				'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
-			]);
+			$aPostFields);
 
 		// Assert
 		$sTitle = Dict::S('MFA:RC:CodeValidation:Title');
 		$this->AssertStringContains($sTitle, $sOutput, 'The page should be the Recovery code validation screen');
 		$this->AssertStringContains('<input type="text" id="recovery_code" name="recovery_code" value="" size="16"', $sOutput, 'The page should have a code input form');
 		$this->CheckThereIsAReturnToLoginPageLink($sOutput);
+
+		$sSearchedHtml=<<<HTML
+<form id="mfa_recovery_form" method="post">
+HTML;
+		$iStart = strpos($sOutput, $sSearchedHtml);
+		$sFormOutput = substr($sOutput, $iStart);
+
+		foreach ($aPostFields as $sKey => $sVal) {
+			$sExpected = <<<HTML
+<input type="hidden" value="$sVal" name="$sKey">
+HTML;
+			$this->assertTrue(false !== strpos($sFormOutput, $sExpected), "switch form should contain param to post $sKey with his value: $sFormOutput");
+		}
 
 	}
 
