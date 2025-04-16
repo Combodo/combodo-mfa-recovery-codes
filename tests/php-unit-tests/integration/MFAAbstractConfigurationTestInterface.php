@@ -1,6 +1,6 @@
 <?php
 
-namespace Combodo\iTop\MFABase\Test;
+namespace Combodo\iTop\MFARecoveryCodes\Test;
 
 interface MFAAbstractConfigurationTestInterface {
 	public function testConfigurationFirstScreenDisplay();

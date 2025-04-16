@@ -1,6 +1,6 @@
 <?php
 
-namespace Combodo\iTop\MFABase\Test;
+namespace Combodo\iTop\MFARecoveryCodes\Test;
 
 use Combodo\iTop\Test\UnitTest\ItopDataTestCase;
 use Config;
@@ -11,6 +11,13 @@ use MFAUserSettings;
 class AbstractMFATest extends ItopDataTestCase
 {
 	protected Config $oiTopConfig;
+
+	public function SkipTestWhenNoTransactionConfigured() : void
+	{
+		if (! \MetaModel::GetConfig()->Get('transactions_enabled', false)){
+			$this->markTestSkipped("transactions_enabled=false => test skipped to avoid meaningless failure");
+		}
+	}
 
 	public function CleanupAdminRules()
 	{

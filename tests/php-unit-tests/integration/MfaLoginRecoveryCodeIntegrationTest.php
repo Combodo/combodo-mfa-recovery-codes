@@ -1,11 +1,11 @@
 <?php
 
-namespace Combodo\iTop\MFABase\Test\Integration;
+namespace Combodo\iTop\MFARecoveryCodes\Test\Integration;
 
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
-use Combodo\iTop\MFABase\Test\AbstractMFATest;
-use Combodo\iTop\MFABase\Test\MFAAbstractConfigurationTestInterface;
-use Combodo\iTop\MFABase\Test\MFAAbstractValidationTestInterface;
+use Combodo\iTop\MFARecoveryCodes\Test\AbstractMFATest;
+use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractConfigurationTestInterface;
+use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractValidationTestInterface;
 use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
 use Combodo\iTop\Test\UnitTest\ItopDataTestCase;
 use Dict;
@@ -66,8 +66,6 @@ class MfaLoginRecoveryCodeIntegrationTest extends AbstractMFATest implements MFA
 
 		$this->oiTopConfig = new \Config($sConfigPath);
 		$this->oiTopConfig->SetModuleSetting('combodo-mfa-base', 'enabled', true);
-		//$this->oiTopConfig->Set('transactions_enabled', false);
-		//$this->oiTopConfig->Set('log_transactions', true);
 		$this->SaveItopConfFile();
 	}
 
@@ -201,6 +199,8 @@ HTML;
 
 	public function testValidationFailDueToInvalidTransactionId()
 	{
+		$this->SkipTestWhenNoTransactionConfigured();
+
 		// Arrange
 		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
 
