@@ -2,15 +2,11 @@
 
 namespace Combodo\iTop\MFARecoveryCodes\Test\Integration;
 
-use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
-use Combodo\iTop\MFARecoveryCodes\Test\AbstractMFATest;
-use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractConfigurationTestInterface;
-use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractValidationTestInterface;
 use Combodo\iTop\MFARecoveryCodes\Service\MFAUserSettingsRecoveryCodesService;
+use Combodo\iTop\MFARecoveryCodes\Test\AbstractMFATest;
+use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractValidationTestInterface;
 use Combodo\iTop\Test\UnitTest\ItopDataTestCase;
 use Dict;
-use MetaModel;
-use MFAAdminRule;
 use User;
 
 require_once dirname(__DIR__) . "/AbstractMFATest.php";
@@ -29,7 +25,6 @@ class MfaLoginRecoveryCodeIntegrationTest extends AbstractMFATest implements MFA
 	//users need to be persisted in DB
 	const USE_TRANSACTION = false;
 
-	protected string $sConfigTmpBackupFile;
 	protected string $sPassword;
 	protected User $oUser;
 	protected string $sUniqId;
@@ -44,15 +39,7 @@ class MfaLoginRecoveryCodeIntegrationTest extends AbstractMFATest implements MFA
 	protected function setUp(): void {
 		parent::setUp();
 
-		$sConfigPath = MetaModel::GetConfig()->GetLoadedFile();
-
-		clearstatcache();
-		echo sprintf("rights via ls on %s:\n %s \n", $sConfigPath, exec("ls -al $sConfigPath"));
-		$sFilePermOutput = substr(sprintf('%o', fileperms('/etc/passwd')), -4);
-		echo sprintf("rights via fileperms on %s:\n %s \n", $sConfigPath, $sFilePermOutput);
-
-		$this->sConfigTmpBackupFile = tempnam(sys_get_temp_dir(), "config_");
-		MetaModel::GetConfig()->WriteToFile($this->sConfigTmpBackupFile);
+		$this->BackupConfiguration();
 
 		$this->sUniqId = "MFABASE" . uniqid();
 		$this->CleanupAdminRules();
@@ -64,25 +51,12 @@ class MfaLoginRecoveryCodeIntegrationTest extends AbstractMFATest implements MFA
 			$this->sPassword
 		);
 
-		$this->oiTopConfig = new \Config($sConfigPath);
 		$this->oiTopConfig->SetModuleSetting('combodo-mfa-base', 'enabled', true);
 		$this->SaveItopConfFile();
 	}
 
 	protected function tearDown(): void {
-		\UserRights::Logoff();
 		parent::tearDown();
-
-		if (! is_null($this->sConfigTmpBackupFile) && is_file($this->sConfigTmpBackupFile)){
-			//put config back
-			$sConfigPath = $this->oiTopConfig->GetLoadedFile();
-			@chmod($sConfigPath, 0770);
-			$oConfig = new \Config($this->sConfigTmpBackupFile);
-			$oConfig->WriteToFile($sConfigPath);
-			@chmod($sConfigPath, 0440);
-		}
-
-		$_SESSION = [];
 	}
 
 	public function CheckThereIsAReturnToLoginPageLink($sOutput) {
@@ -104,7 +78,7 @@ HTML;
 			'auth_pwd'          => $this->sPassword,
 			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
 		];
-		$sOutput = $this->CallItopUrl('/pages/UI.php',
+		$sOutput = $this->CallItopUri('pages/UI.php',
 			$aPostFields);
 
 		// Assert
@@ -137,7 +111,7 @@ HTML;
 		$oMFAUserSettingsRecoveryCodesService->CreateCodes($oActiveSetting);
 		// Act
 		$sLogin = $this->oUser->Get('login');
-		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+		$sOutput = $this->CallItopUri('pages/UI.php', [
 			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
 			'recovery_code' => 'WrongCode',
 			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
@@ -155,7 +129,7 @@ HTML;
 		$oActiveSetting = $this->GetMFAUserSettingsRecoveryCodes();
 
 		// Act
-		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+		$sOutput = $this->CallItopUri('pages/UI.php', [
 			'auth_user' => $this->oUser->Get('login'),
 			'auth_pwd' => $this->sPassword,
 			'mfa_restart_login' => 'true',
@@ -179,7 +153,7 @@ HTML;
 
 		// Act
 		$sLogin = $this->oUser->Get('login');
-		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+		$sOutput = $this->CallItopUri('pages/UI.php', [
 			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
 			'recovery_code' => $sCode,
 			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,
@@ -211,7 +185,7 @@ HTML;
 
 		// Act
 		$sLogin = $this->oUser->Get('login');
-		$sOutput = $this->CallItopUrl('/pages/UI.php', [
+		$sOutput = $this->CallItopUri('pages/UI.php', [
 			'transaction_id' => "WrongID",
 			'recovery_code' => $sCode,
 			'selected_mfa_mode' => \MFAUserSettingsRecoveryCodes::class,

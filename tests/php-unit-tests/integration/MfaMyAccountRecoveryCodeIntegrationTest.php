@@ -3,13 +3,11 @@
 namespace Combodo\iTop\MFARecoveryCodes\Test\Integration;
 
 use Combodo\iTop\MFABase\Service\MFAUserSettingsService;
+use Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService;
 use Combodo\iTop\MFARecoveryCodes\Test\AbstractMFATest;
 use Combodo\iTop\MFARecoveryCodes\Test\MFAAbstractConfigurationTestInterface;
-use Combodo\iTop\MFARecoveryCodes\Service\MFARecoveryCodesService;
 use Combodo\iTop\Test\UnitTest\ItopDataTestCase;
 use Dict;
-use MetaModel;
-use MFAAdminRule;
 use User;
 
 require_once dirname(__DIR__) . "/AbstractMFATest.php";
@@ -28,7 +26,6 @@ class MfaMyAccountRecoveryCodeIntegrationTest extends AbstractMFATest implements
 	//users need to be persisted in DB
 	const USE_TRANSACTION = false;
 
-	protected string $sConfigTmpBackupFile;
 	protected string $sPassword;
 	protected string $sMfaMyAccountConfigurationUri;
 	protected User $oUser;
@@ -37,15 +34,7 @@ class MfaMyAccountRecoveryCodeIntegrationTest extends AbstractMFATest implements
 	protected function setUp(): void {
 		parent::setUp();
 
-		$sConfigPath = MetaModel::GetConfig()->GetLoadedFile();
-
-		clearstatcache();
-		echo sprintf("rights via ls on %s:\n %s \n", $sConfigPath, exec("ls -al $sConfigPath"));
-		$sFilePermOutput = substr(sprintf('%o', fileperms('/etc/passwd')), -4);
-		echo sprintf("rights via fileperms on %s:\n %s \n", $sConfigPath, $sFilePermOutput);
-
-		$this->sConfigTmpBackupFile = tempnam(sys_get_temp_dir(), "config_");
-		MetaModel::GetConfig()->WriteToFile($this->sConfigTmpBackupFile);
+		$this->BackupConfiguration();
 
 		$this->sUniqId = "MFABASE" . uniqid();
 		$this->CleanupAdminRules();
@@ -57,7 +46,6 @@ class MfaMyAccountRecoveryCodeIntegrationTest extends AbstractMFATest implements
 			$this->sPassword
 		);
 
-		$this->oiTopConfig = new \Config($sConfigPath);
 		$this->oiTopConfig->SetModuleSetting('combodo-mfa-base', 'enabled', true);
 		$this->SaveItopConfFile();
 
@@ -65,19 +53,7 @@ class MfaMyAccountRecoveryCodeIntegrationTest extends AbstractMFATest implements
 	}
 
 	protected function tearDown(): void {
-		\UserRights::Logoff();
 		parent::tearDown();
-
-		if (! is_null($this->sConfigTmpBackupFile) && is_file($this->sConfigTmpBackupFile)){
-			//put config back
-			$sConfigPath = $this->oiTopConfig->GetLoadedFile();
-			@chmod($sConfigPath, 0770);
-			$oConfig = new \Config($this->sConfigTmpBackupFile);
-			$oConfig->WriteToFile($sConfigPath);
-			@chmod($sConfigPath, 0440);
-		}
-
-		$_SESSION = [];
 	}
 
 	public function testConfigurationFirstScreenDisplay()
@@ -85,7 +61,7 @@ class MfaMyAccountRecoveryCodeIntegrationTest extends AbstractMFATest implements
 		// Act
 		$sLogin = $this->oUser->Get('login');
 
-		$sOutput = $this->CallItopUrl($this->sMfaMyAccountConfigurationUri, [
+		$sOutput = $this->CallItopUri($this->sMfaMyAccountConfigurationUri, [
 			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword,
 			'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
@@ -115,7 +91,7 @@ HTML;
 
 		$sLogin = $this->oUser->Get('login');
 
-		$sOutput = $this->CallItopUrl($sUri, [
+		$sOutput = $this->CallItopUri($sUri, [
 				'auth_user' => $sLogin,
 				'auth_pwd' => $this->sPassword,
 				'transaction_id' => $this->GetNewGeneratedTransId($sLogin),
@@ -138,7 +114,7 @@ HTML;
 		$oActiveSetting = MFAUserSettingsService::GetInstance()->GetMFAUserSettings($this->oUser->GetKey(), \MFAUserSettingsRecoveryCodes::class);
 		$this->assertEquals('no', $oActiveSetting->Get('validated'));
 		$sLogin = $this->oUser->Get('login');
-		$sOutput = $this->CallItopUrl($this->sMfaMyAccountConfigurationUri, [
+		$sOutput = $this->CallItopUri($this->sMfaMyAccountConfigurationUri, [
 			'transaction_id' => '753951',
 			'auth_user' => $sLogin,
 			'auth_pwd' => $this->sPassword,
